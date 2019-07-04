@@ -1,0 +1,110 @@
+package packets
+
+import (
+	"github.com/xxdstem/bancho/common"
+)
+
+func LoginFailed() common.FinalPacket{
+	//return MakePacketOLD(5, 4, -1)
+	return MakePacket(5, []Packet{{-1, SINT32}})
+}
+
+func ForceUpdate() common.FinalPacket{
+	return MakePacket(5, []Packet{{-2, SINT32}})
+}
+
+func LoginError() common.FinalPacket{
+	return MakePacket(5, []Packet{{-5, SINT32}})
+}
+
+func UserID(userID int32) common.FinalPacket{
+	return MakePacket(5, []Packet{{userID, SINT32}})
+}
+
+func SilenceEnd(seconds uint32) common.FinalPacket{
+	return MakePacket(92, []Packet{{seconds, UINT32}})
+}
+
+func ChoProtocol(version uint32) common.FinalPacket{
+	return MakePacket(75, []Packet{{version, UINT32}})
+}
+
+func UserPrivileges() common.FinalPacket{
+	return MakePacket(71, []Packet{{4, UINT32}})
+}
+
+func FriendList(friends []int32) common.FinalPacket {
+	return MakePacket(72, []Packet{{friends, INT_LIST}})
+}
+
+func OnlinePlayers() common.FinalPacket {
+	return MakePacket(96, []Packet{{[]int32{999, 1000}, INT_LIST}})
+}
+
+func ChannelJoin() common.FinalPacket{
+	return MakePacket(64, []Packet{
+		{"#osu", STRING},
+	})
+}
+
+func ChannelInfo() common.FinalPacket{
+	return MakePacket(65, []Packet{
+		{"#osu", STRING},
+		{"Main channel", STRING},
+		{1, UINT16},
+	})
+}
+
+func ChannelListingComplete() common.FinalPacket {
+	return MakePacket(89, []Packet{{0, UINT32}})
+}
+
+func UserData(user *common.User) common.FinalPacket{
+	packetData := []Packet{
+		{user.ID, SINT32},
+		{user.Name, STRING},
+		{27, BYTE},
+		{56, BYTE},
+		{0, BYTE},
+		{0.0, FLOAT},
+		{0.0, FLOAT}, 
+		{3, UINT32}, //rank?
+	}
+	return MakePacket(83, packetData)
+}
+
+func BotData() common.FinalPacket{
+	packetData := []Packet{
+		{999, SINT32},
+		{"FokaBot", STRING},
+	}
+	return MakePacket(83, packetData)
+}
+
+func UserDataFull(user *common.User) common.FinalPacket{
+	packetData := []Packet{
+		{user.ID, SINT32},
+		{user.Status.Status, BYTE}, //a id
+		{user.Status.Text, STRING}, //a text
+		{user.Status.MD5, STRING}, //a md5
+		{user.Status.Mods, SINT32}, //mods
+		{user.Stats.GameMode, BYTE}, //gm
+		{user.Status.BeatmapID, SINT32}, //bid
+		{100, UINT64}, // rankedscore
+		{0.99971, FLOAT}, //accuracy
+		{user.Stats.PlayCount, UINT32}, // playcount
+		{150, UINT64}, // totalScore
+		{user.Stats.Rank, UINT32}, // gameRank
+		{user.Stats.PP, UINT16}, // pp
+
+	}
+	return MakePacket(11, packetData)
+}
+
+func UserPresence(userID int32) common.FinalPacket {
+	return MakePacket(85, []Packet{{userID, SINT32}})
+}	
+
+func OrangeNotification(message string) common.FinalPacket {
+	return MakePacket(24, []Packet{{message, STRING}})
+}
