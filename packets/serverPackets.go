@@ -90,10 +90,10 @@ func UserDataFull(user *common.User) common.FinalPacket{
 		{user.Status.Mods, SINT32}, //mods
 		{user.Stats.Mode, BYTE}, //gm
 		{user.Status.BeatmapID, SINT32}, //bid
-		{100, UINT64}, // rankedscore
-		{0.99971, FLOAT}, //accuracy
+		{user.Stats.RankedScore, UINT64}, // rankedscore
+		{user.Stats.Accuracy, FLOAT}, //accuracy
 		{user.Stats.PlayCount, UINT32}, // playcount
-		{150, UINT64}, // totalScore
+		{user.Stats.TotalScore, UINT64}, // totalScore
 		{user.Stats.Rank, UINT32}, // gameRank
 		{user.Stats.PP, UINT16}, // pp
 

@@ -32,15 +32,18 @@ type UserStats struct{
 	PP		 	uint16
 	Rank	 	uint32
 	PlayCount	uint32
+	Accuracy	float64
+	TotalScore	uint64
+	RankedScore uint64
 	Mode 		byte
 }
 
 func (u *User) UpdateStats(mode byte) {
 	modeText := IntToGameMode(mode)
 	statsQuery := `
-	SELECT pp_`+modeText+`, playcount_`+modeText+`, 3 FROM users_stats WHERE id = ?
+	SELECT pp_`+modeText+`, playcount_`+modeText+`, avg_accuracy_`+modeText+`/100, ranked_score_`+modeText+`, total_score_`+modeText+`,  3 FROM users_stats WHERE id = ?
 	`
-	err := DB.QueryRow(statsQuery, u.ID).Scan(&u.Stats.PP, &u.Stats.PlayCount, &u.Stats.Rank)
+	err := DB.QueryRow(statsQuery, u.ID).Scan(&u.Stats.PP, &u.Stats.PlayCount, &u.Stats.Accuracy, &u.Stats.RankedScore, &u.Stats.TotalScore, &u.Stats.Rank)
 	if err != nil{
 		fmt.Println(err)
 	}
