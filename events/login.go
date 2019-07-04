@@ -39,7 +39,7 @@ func Login(input []byte) (string, bool, error){
 	common.UidToSessionMutex.Lock()
 	common.UidToSession[int32(sess.User.ID)] = sess
 	common.UidToSessionMutex.Unlock()
-	s := common.GetStream("all")
+	s := common.GetStream("main")
 	s.Subscribe(guid)
 	go sendUserPresence(s, int32(sess.User.ID))
 	return guid, false, nil

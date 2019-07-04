@@ -11,6 +11,10 @@ var DB *sqlx.DB
 var Sessions map[string]*Session
 var SessionsMutex *sync.RWMutex
 
+
+var Matches map[string]*Match
+var MatchesMutex *sync.RWMutex
+
 var UidToSession map[int32]*Session
 var UidToSessionMutex *sync.RWMutex
 
@@ -23,5 +27,10 @@ func Init(){
 
 	streams = make(map[string]*Stream)
 	streamsMutex = &sync.RWMutex{}
-	NewStream("all")
+
+	Matches = make(map[string]*Match)
+	MatchesMutex = &sync.RWMutex{}
+	NewStream("main")
+	NewStream("lobby")
+	
 }
