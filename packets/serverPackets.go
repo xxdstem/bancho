@@ -88,7 +88,7 @@ func UserDataFull(user *common.User) common.FinalPacket{
 		{user.Status.Text, STRING}, //a text
 		{user.Status.MD5, STRING}, //a md5
 		{user.Status.Mods, SINT32}, //mods
-		{user.Stats.GameMode, BYTE}, //gm
+		{user.Stats.Mode, BYTE}, //gm
 		{user.Status.BeatmapID, SINT32}, //bid
 		{100, UINT64}, // rankedscore
 		{0.99971, FLOAT}, //accuracy

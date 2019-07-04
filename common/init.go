@@ -23,4 +23,5 @@ func Init(){
 
 	streams = make(map[string]*Stream)
 	streamsMutex = &sync.RWMutex{}
+	NewStream("all")
 }

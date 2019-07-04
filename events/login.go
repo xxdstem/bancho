@@ -21,6 +21,7 @@ func Login(input []byte) (string, bool, error){
 	if err != nil{
 		sess.Push(packets.UserID(-1))
 	}
+	sess.User.UpdateStats(0)
 	sess.Push(
 		packets.SilenceEnd(0),
 		packets.UserID(sess.User.ID),
@@ -38,7 +39,22 @@ func Login(input []byte) (string, bool, error){
 	common.UidToSessionMutex.Lock()
 	common.UidToSession[int32(sess.User.ID)] = sess
 	common.UidToSessionMutex.Unlock()
+	s := common.GetStream("all")
+	s.Subscribe(guid)
+	go sendUserPresence(s, int32(sess.User.ID))
 	return guid, false, nil
+}
+
+func sendUserPresence(s *common.Stream, uid int32) {
+	count := 0
+	for _, session := range common.CopySessions() {
+		if session.User.ID == uid {
+			count++
+		}
+	}
+	if count < 2 {
+		s.Send(packets.UserPresence(uid))
+	}
 }
 
 // Unmarshal creates a new LoginData with the data passed.

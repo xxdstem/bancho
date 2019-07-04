@@ -4,10 +4,6 @@ import (
 	"fmt"
 )
 
-const statsQuery = `
-SELECT pp_?, playcount_? FROM user_stats WHERE id = ?
-`
-
 // User represents an user online on bancho.
 type User struct {
 	ID        	int32
@@ -36,19 +32,23 @@ type UserStats struct{
 	PP		 	uint16
 	Rank	 	uint32
 	PlayCount	uint32
-	GameMode 	byte
+	Mode 		byte
 }
 
-func (u *User) UpdateStats(mode int) {
+func (u *User) UpdateStats(mode byte) {
 	modeText := IntToGameMode(mode)
-	err := DB.QueryRow(statsQuery, modeText, modeText, u.ID).Scan(&u.Stats.PP, &u.Stats.PlayCount)
+	statsQuery := `
+	SELECT pp_`+modeText+`, playcount_`+modeText+`, 3 FROM users_stats WHERE id = ?
+	`
+	err := DB.QueryRow(statsQuery, u.ID).Scan(&u.Stats.PP, &u.Stats.PlayCount, &u.Stats.Rank)
 	if err != nil{
 		fmt.Println(err)
 	}
+	u.Stats.Mode = mode
 	// do updates/
 }
 
-func IntToGameMode(mode int) string{
+func IntToGameMode(mode byte) string{
 	switch (mode){
 		default:
 			return "std"
