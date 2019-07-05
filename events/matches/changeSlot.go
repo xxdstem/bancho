@@ -15,13 +15,9 @@ func ChangeSlot(ps common.PackSess){
 	defer match.Mutex.Unlock()
 	for id, slot := range match.Players{
 		if slot.User != nil && slot.User.ID == ps.S.User.ID{
-			fmt.Println(match.Players[id])
 			match.Players[slotID] = match.Players[id]
-			fmt.Println(match.Players[slotID])
 			match.Players[id].Status = 1
 			match.Players[id].User = nil
-			fmt.Println(match.Players[id])
-			fmt.Println("did fine?")
 			UpdateMatch(ps)
 			return
 		}
