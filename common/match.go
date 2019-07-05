@@ -1,9 +1,10 @@
 package common
 
 import "sync"
+import "fmt"
 
 type Match struct {
-	ID        	int
+	ID        	uint32
 	Name      	string
 	Password	string
 	CreatorID	int32
@@ -36,13 +37,80 @@ type PlayerScore struct{
 	Combo		int32
 }
 
-func NewMatch(m *Match) *Match {
+func NewMatch(m Match) *Match {
 	MatchesMutex.Lock()
+	defer MatchesMutex.Unlock()
 	lastMatchID++
-	m.ID = lastMatchID
-	Matches[lastMatchID] = m
-	MatchesMutex.Unlock()
+	m.ID = uint32(lastMatchID)
+	Matches[lastMatchID] = &m
+	
 	return Matches[lastMatchID]
+	
+}
+
+func DisposeMatch(m *Match) {
+	MatchesMutex.Lock()
+	defer MatchesMutex.Unlock()
+	Matches[int(m.ID)] = nil
+	fmt.Println("disposing match")
+}
+
+
+func (m *Match) getUserSlotID(u int32) int{
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
+	for i, slot := range m.Players{
+		if slot.User.ID == u{
+			return i
+		}
+	}
+	return -1
+}
+
+func (m *Match) UserJoin(u *User) bool{
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
+	var spareSlot int
+	spareSlot = -1
+	for i, slot := range m.Players{
+		if spareSlot == -1 && slot.Status == 1{
+			spareSlot = i
+		}
+	}
+	if spareSlot == -1{
+		return false
+	}
+	m.Players[spareSlot].User = u
+	m.Players[spareSlot].Team = 0
+	m.Players[spareSlot].Status = 4
+
+	return true
+}
+
+func (m *Match) UserLeft(u *User) bool{
+	slotID := m.getUserSlotID(u.ID)
+	m.Players[slotID].User = nil
+	m.Players[slotID].Team = 0
+	m.Players[slotID].Status = 1
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
+	if m.countUsers() == 0{
+		DisposeMatch(m)
+		/*s := common.GetStream("lobby")
+		s.Push()*/
+	}
+	return true
+	
+}
+
+func (m *Match) countUsers() int{
+	var i int
+	for _, v := range m.Players{
+		if v.User != nil{
+			i++
+		}
+	}
+	return i
 }
 
 func (u *MatchPlayer) UpdateScore(score uint64) {

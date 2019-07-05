@@ -31,6 +31,8 @@ func HandleEvent(ps common.PackSess){
 			matches.ChangeSlot(ps)
 		case packets.OsuMatchChangeSettings:
 			matches.ChangeSettings(ps)
+		case packets.OsuMatchPart:
+			matches.PartMatch(ps)
 	}
 }
 

@@ -8,30 +8,28 @@ import (
 )
 
 func CreateMatch(ps common.PackSess){
-	var match  *common.Match
 	packetData := packets.MatchSettings(ps.P)
-	match = &common.Match{
-		Name:			packetData.Name,
-		CreatorID: 		packetData.CreatorID,
-		HostID: 		packetData.CreatorID,
-		Mutex: 			&sync.Mutex{},
-	}
-	match.Beatmap = common.MatchBeatmap{
+	b := common.MatchBeatmap{
 		Name:	packetData.BeatmapName,
 		MD5:	packetData.BeatmapMD5,
 		ID:		packetData.BeatmapID,
 	}
-	fmt.Println(match)
+	m := common.Match{
+		Name:			packetData.Name,
+		CreatorID: 		packetData.CreatorID,
+		HostID: 		packetData.CreatorID,
+		Mutex: 			&sync.Mutex{},
+		Beatmap:		b,
+	}
 	for i := 0; i < packetData.Slots; i++ {
-		match.Players[i].Status = 1
+		m.Players[i].Status = 1
 	}
 	for i := packetData.Slots; i < 16; i++ {
-		match.Players[i].Status = 2
+		m.Players[i].Status = 2
 	}
-	match.Players[0].User = &ps.S.User
-	match.Players[0].Team = 0
-	match.Players[0].Status = 4
-	ps.S.User.Match = common.NewMatch(match)
-	fmt.Println("created match #", ps.S.User.Match.ID)
-	ps.S.Push(packets.MatchDataFull(match, packets.BanchoMatchJoinSuccess))
+	match := common.NewMatch(m)
+	fmt.Println("created match #", match.ID)
+	ps.S.User.JoinMatch(match)
+	
+	ps.S.Push(packets.MatchDataFull(match, packets.BanchoMatchJoinSuccess, false))
 }

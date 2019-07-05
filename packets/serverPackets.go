@@ -109,14 +109,20 @@ func OrangeNotification(message string) common.FinalPacket {
 	return MakePacket(24, []Packet{{message, STRING}})
 }
 
-func MatchDataFull(m *common.Match, packetID uint16) common.FinalPacket{
+func MatchDataFull(m *common.Match, packetID uint16, censored bool) common.FinalPacket{
+	var password string
+	if censored && m.Password != ""{
+		password = "redacted"
+	}else{
+		password = m.Password
+	}
 	pack := []Packet{
 		{uint16(m.ID), UINT16},
 		{byte(0), BYTE},
 		{byte(0), BYTE},
 		{uint32(0), UINT32},
 		{m.Name, STRING},
-		{m.Password, STRING},
+		{password, STRING},
 		{m.Beatmap.Name, STRING},
 		{m.Beatmap.ID, UINT32},
 		{m.Beatmap.MD5, STRING},
@@ -138,4 +144,8 @@ func MatchDataFull(m *common.Match, packetID uint16) common.FinalPacket{
 		Packet{0, UINT32},
 	)
 	return MakePacket(packetID, pack)
+}
+
+func DisposeMatch(matchID uint32) common.FinalPacket{
+	return MakePacket(BanchoMatchDisband, []Packet{{matchID, UINT32}})
 }

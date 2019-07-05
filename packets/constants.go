@@ -53,7 +53,7 @@ const (
 	OsuLobbyJoin                         // Null - client joined lobby
 	OsuMatchCreate                       // client created a new lobby
 	OsuMatchJoin                         // sends a request to bancho (join lobby)
-	OsuLobbySomething                    // i can't figure out this
+	OsuMatchPart                    	
 	BanchoLobbyJoinOBSOLETE              // according to the mid-2014 decompiled code this is when bancho informs a client about a new player that joins a lobby this is obsolete now.
 	BanchoLobbyPartOBSOLETE              // according to the mid-2014 decompiled code this is when bancho informs a client about a new player that joins a lobby this is obsolete now.
 	BanchoMatchJoinSuccess

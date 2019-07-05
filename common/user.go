@@ -39,6 +39,16 @@ type UserStats struct{
 	Mode 		byte
 }
 
+func (u *User) JoinMatch(m *Match){
+	m.UserJoin(u)
+	u.Match = m
+}
+
+func (u *User) LeaveMatch(){
+	u.Match.UserLeft(u)
+	u.Match = nil
+}
+
 func (u *User) UpdateStats(mode byte) {
 	modeText := IntToGameMode(mode)
 	statsQuery := `

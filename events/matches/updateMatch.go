@@ -7,5 +7,8 @@ import (
 
 func UpdateMatch(ps common.PackSess){
 	match := ps.S.User.Match
-	ps.S.Push(packets.MatchDataFull(match, packets.BanchoMatchUpdate))
+	if match != nil{
+		ps.S.Push(packets.MatchDataFull(match, packets.BanchoMatchUpdate, false))
+	}
+	
 }
