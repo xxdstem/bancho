@@ -18,6 +18,7 @@ type User struct {
 		Longitude float32
 		Latitude  float32
 	}
+	Match		*Match
 }
 
 type UserStatus struct{

@@ -10,6 +10,9 @@ import (
 )
 
 func HandleEvent(ps common.PackSess){
+	if ps.P.ID == 4{
+		return
+	}
 	fmt.Println(ps.P.ID)
 	switch ps.P.ID{
 		case packets.OsuSendUserState:
@@ -24,6 +27,10 @@ func HandleEvent(ps common.PackSess){
 			events.PartLobby(ps)
 		case packets.OsuMatchCreate:
 			matches.CreateMatch(ps)
+		case packets.OsuMatchChangeSettings:
+			matches.UpdateMatch(ps)
+		case packets.OsuMatchChangeSlot:
+			matches.ChangeSlot(ps)
 	}
 }
 

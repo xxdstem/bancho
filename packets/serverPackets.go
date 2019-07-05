@@ -108,3 +108,34 @@ func UserPresence(userID int32) common.FinalPacket {
 func OrangeNotification(message string) common.FinalPacket {
 	return MakePacket(24, []Packet{{message, STRING}})
 }
+
+func MatchDataFull(m *common.Match, packetID uint16) common.FinalPacket{
+	pack := []Packet{
+		{uint16(m.ID), UINT16},
+		{byte(0), BYTE},
+		{byte(0), BYTE},
+		{uint32(0), UINT32},
+		{m.Name, STRING},
+		{m.Password, STRING},
+		{m.Beatmap.Name, STRING},
+		{m.Beatmap.ID, UINT32},
+		{m.Beatmap.MD5, STRING},
+	}
+	for _, slot := range m.Players{
+		pack = append(pack, Packet{slot.Status, BYTE})
+	}
+	for _, slot := range m.Players{
+		pack = append(pack, Packet{slot.Team, BYTE})
+	}
+
+	pack = append(pack,
+		Packet{uint32(m.HostID), UINT32},
+
+		Packet{m.HostID, SINT32},
+		Packet{0, BYTE},
+		Packet{0, BYTE},
+		Packet{0, BYTE},
+		Packet{0, UINT32},
+	)
+	return MakePacket(packetID, pack)
+}
