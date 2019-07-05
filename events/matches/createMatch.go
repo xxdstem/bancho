@@ -9,35 +9,24 @@ import (
 
 func CreateMatch(ps common.PackSess){
 	var match  *common.Match
-	match = &common.Match{Mutex: &sync.Mutex{}}
-	var a uint16
-	var prog, u, playmode, scoringtype, matchteamtype byte
-	var mods uint32
-	var password string
-	var slotStatus [16]byte
-	var slotTeams [16]byte
-	ps.P.Unmarshal(
-		&a,
-		&prog,
-		&u,
-		&mods,
-		&match.Name,
-		&password,
-		&match.Beatmap.Name,
-		&match.Beatmap.ID,
-		&match.Beatmap.MD5,
-		&slotStatus,
-		&slotTeams,
-		&match.CreatorID,
-		&playmode,
-		&scoringtype,
-		&matchteamtype,
-	)
-	match.HostID = match.CreatorID
-
-	for i, _ := range match.Players{ 
-		match.Players[i].Team = 0
+	packetData := packets.MatchSettings(ps.P)
+	match = &common.Match{
+		Name:			packetData.Name,
+		CreatorID: 		packetData.CreatorID,
+		HostID: 		packetData.CreatorID,
+		Mutex: 			&sync.Mutex{},
+	}
+	match.Beatmap = common.MatchBeatmap{
+		Name:	packetData.BeatmapName,
+		MD5:	packetData.BeatmapMD5,
+		ID:		packetData.BeatmapID,
+	}
+	fmt.Println(match)
+	for i := 0; i < packetData.Slots; i++ {
 		match.Players[i].Status = 1
+	}
+	for i := packetData.Slots; i < 16; i++ {
+		match.Players[i].Status = 2
 	}
 	match.Players[0].User = &ps.S.User
 	match.Players[0].Team = 0

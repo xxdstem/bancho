@@ -22,7 +22,7 @@ func HandleEvent(ps common.PackSess){
 		case packets.OsuRequestStatusUpdate:
 			events.ReturnUserStats(ps)
 		case packets.OsuLobbyJoin:
-			events.JoinLobby(ps)	
+			events.JoinLobby(ps)
 		case packets.OsuLobbyPart:
 			events.PartLobby(ps)
 		case packets.OsuMatchCreate:
