@@ -2,6 +2,7 @@ package packets
 
 import (
 	"github.com/xxdstem/bancho/common"
+	"fmt"
 )
 
 func LoginFailed() common.FinalPacket{
@@ -38,7 +39,21 @@ func FriendList(friends []int32) common.FinalPacket {
 }
 
 func OnlinePlayers() common.FinalPacket {
-	return MakePacket(96, []Packet{{[]int32{999, 1000}, INT_LIST}})
+	users := make([]int32, len(common.Sessions)+1)
+	users[0] = 999
+	i := 1
+	for _, sess := range common.CopySessions() {
+		if sess != nil && sess.User.ID != 0 {
+			if i >= len(users) {
+				users = append(users, sess.User.ID)
+			} else {
+				users[i] = sess.User.ID
+			}
+			i++
+		}
+	}
+	fmt.Println(users[:i])
+	return MakePacket(96, []Packet{{users[:i], INT_LIST}})
 }
 
 func ChannelJoin() common.FinalPacket{
@@ -68,7 +83,7 @@ func UserData(user *common.User) common.FinalPacket{
 		{0, BYTE},
 		{0.0, FLOAT},
 		{0.0, FLOAT}, 
-		{3, UINT32}, //rank?
+		{0, UINT32}, //rank?
 	}
 	return MakePacket(83, packetData)
 }
@@ -77,6 +92,12 @@ func BotData() common.FinalPacket{
 	packetData := []Packet{
 		{999, SINT32},
 		{"FokaBot", STRING},
+		{27, BYTE},
+		{0, BYTE},
+		{0, BYTE},
+		{0.0, FLOAT},
+		{0.0, FLOAT}, 
+		{0, UINT32},
 	}
 	return MakePacket(83, packetData)
 }

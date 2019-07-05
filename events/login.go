@@ -41,19 +41,17 @@ func Login(input []byte) (string, bool, error){
 	common.UidToSessionMutex.Unlock()
 	s := common.GetStream("main")
 	s.Subscribe(guid)
-	go sendUserPresence(s, int32(sess.User.ID))
+	go s.Send(packets.UserPresence(int32(sess.User.ID)))
+	go s.Send(packets.UserData(&sess.User))
+	go sendPlayersStats(sess)
 	return guid, false, nil
 }
 
-func sendUserPresence(s *common.Stream, uid int32) {
-	count := 0
+func sendPlayersStats(s *common.Session) {
 	for _, session := range common.CopySessions() {
-		if session.User.ID == uid {
-			count++
+		if session.User.ID != s.User.ID {
+			s.Push(packets.UserData(&session.User))
 		}
-	}
-	if count < 2 {
-		s.Send(packets.UserPresence(uid))
 	}
 }
 

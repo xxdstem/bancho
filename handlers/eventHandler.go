@@ -13,12 +13,14 @@ func HandleEvent(ps common.PackSess){
 	if ps.P.ID == 4{
 		return
 	}
-	fmt.Println(ps.P.ID)
+	fmt.Println("Requested packID: ",  ps.P.ID)
 	switch ps.P.ID{
 		case packets.OsuSendUserState:
 			events.UpdateStats(ps)
 		case packets.OsuUserStatsRequest:
 			events.UserStatsRequest(ps)
+		case packets.OsuUserPresenceRequest:
+			events.UserPanelRequest(ps)
 		case packets.OsuRequestStatusUpdate:
 			events.ReturnUserStats(ps)
 		case packets.OsuLobbyJoin:
