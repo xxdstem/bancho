@@ -30,6 +30,7 @@ func CreateMatch(ps common.PackSess){
 	match := common.NewMatch(m)
 	fmt.Println("created match #", match.ID)
 	ps.S.User.JoinMatch(match)
-	
+	s := common.GetStream("lobby")
+	s.Send(packets.MatchDataFull(match, packets.BanchoMatchNew, true))
 	ps.S.Push(packets.MatchDataFull(match, packets.BanchoMatchJoinSuccess, false))
 }

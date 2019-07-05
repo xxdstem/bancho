@@ -44,9 +44,10 @@ func (u *User) JoinMatch(m *Match){
 	u.Match = m
 }
 
-func (u *User) LeaveMatch(){
-	u.Match.UserLeft(u)
+func (u *User) LeaveMatch() bool{
+	_, dispose := u.Match.UserLeft(u)
 	u.Match = nil
+	return dispose
 }
 
 func (u *User) UpdateStats(mode byte) {

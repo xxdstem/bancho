@@ -87,7 +87,7 @@ func (m *Match) UserJoin(u *User) bool{
 	return true
 }
 
-func (m *Match) UserLeft(u *User) bool{
+func (m *Match) UserLeft(u *User) (bool, bool){
 	slotID := m.getUserSlotID(u.ID)
 	m.Players[slotID].User = nil
 	m.Players[slotID].Team = 0
@@ -96,10 +96,9 @@ func (m *Match) UserLeft(u *User) bool{
 	defer m.Mutex.Unlock()
 	if m.countUsers() == 0{
 		DisposeMatch(m)
-		/*s := common.GetStream("lobby")
-		s.Push()*/
+		return true, true
 	}
-	return true
+	return true, false
 	
 }
 
