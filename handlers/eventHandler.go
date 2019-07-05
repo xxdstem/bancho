@@ -27,10 +27,10 @@ func HandleEvent(ps common.PackSess){
 			events.PartLobby(ps)
 		case packets.OsuMatchCreate:
 			matches.CreateMatch(ps)
-		case packets.OsuMatchChangeSettings:
-			matches.UpdateMatch(ps)
 		case packets.OsuMatchChangeSlot:
 			matches.ChangeSlot(ps)
+		case packets.OsuMatchChangeSettings:
+			matches.ChangeSettings(ps)
 	}
 }
 
