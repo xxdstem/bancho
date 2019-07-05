@@ -8,11 +8,13 @@ import (
 
 var DB *sqlx.DB
 
+var lastMatchID int
+
 var Sessions map[string]*Session
 var SessionsMutex *sync.RWMutex
 
 
-var Matches map[string]*Match
+var Matches map[int]*Match
 var MatchesMutex *sync.RWMutex
 
 var UidToSession map[int32]*Session
@@ -28,7 +30,7 @@ func Init(){
 	streams = make(map[string]*Stream)
 	streamsMutex = &sync.RWMutex{}
 
-	Matches = make(map[string]*Match)
+	Matches = make(map[int]*Match)
 	MatchesMutex = &sync.RWMutex{}
 	NewStream("main")
 	NewStream("lobby")

@@ -23,6 +23,13 @@ type PlayerScore struct{
 	Combo		int32
 }
 
+func NewMatch(m *Match) *Match {
+	MatchesMutex.Lock()
+	lastMatchID++
+	Matches[lastMatchID] = m
+	MatchesMutex.Unlock()
+	return Matches[lastMatchID]
+}
 
 func (u *MatchPlayer) UpdateScore(score uint64) {
 	u.Score.Score = score
