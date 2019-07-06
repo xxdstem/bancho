@@ -3,7 +3,6 @@ package events
 import (
 	"github.com/xxdstem/bancho/packets"
 	"github.com/xxdstem/bancho/common"
-	"fmt"	
 )
 
 func UserPanelRequest(ps common.PackSess) {
