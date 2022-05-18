@@ -4,7 +4,8 @@ import (
 	"container/list"
 	"sync"
 	"time"
-	"git.zxq.co/ripple/nuclearbancho/inbound"
+
+	"bancho/inbound"
 )
 
 type LoginData struct {
@@ -22,7 +23,7 @@ type Session struct {
 	LastRequest time.Time
 }
 
-type FinalPacket struct{
+type FinalPacket struct {
 	Content []byte
 	// Ignored is a series of users of which this packet should NEVER arrive.
 	Ignored []string

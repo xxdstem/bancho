@@ -1,24 +1,23 @@
 package events
 
 import (
+	"bancho/common"
+	"bancho/packets"
 	"errors"
 	"strconv"
 	"strings"
-	"github.com/xxdstem/bancho/packets"
-	"github.com/xxdstem/bancho/common"
-	
 )
 
 // LoginData is the data received by the osu! client upon a login request to bancho.
 
-func Login(input []byte) (string, bool, error){
+func Login(input []byte) (string, bool, error) {
 	sess, guid := common.NewSession(common.User{})
 	loginData, err := Unmarshal(input)
-	if err != nil{
+	if err != nil {
 		sess.Push(packets.UserID(-1))
 	}
 	err = common.DB.QueryRow("SELECT id, username FROM users WHERE username LIKE ?", loginData.Username).Scan(&sess.User.ID, &sess.User.Name)
-	if err != nil{
+	if err != nil {
 		sess.Push(packets.UserID(-1))
 	}
 	sess.User.UpdateStats(0)
@@ -35,7 +34,7 @@ func Login(input []byte) (string, bool, error){
 		packets.ChannelInfo(),
 	)
 	sess.Push(packets.ChannelListingComplete())
-	
+
 	common.UidToSessionMutex.Lock()
 	common.UidToSession[int32(sess.User.ID)] = sess
 	common.UidToSessionMutex.Unlock()

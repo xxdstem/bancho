@@ -1,8 +1,8 @@
 package events
 
 import (
-	"github.com/xxdstem/bancho/packets"
-	"github.com/xxdstem/bancho/common"
+	"bancho/common"
+	"bancho/packets"
 )
 
 func UserPanelRequest(ps common.PackSess) {
@@ -14,7 +14,7 @@ func UserPanelRequest(ps common.PackSess) {
 	common.UidToSessionMutex.Lock()
 	defer common.UidToSessionMutex.Unlock()
 	for _, v := range usersRequested {
-		if v == 999{
+		if v == 999 {
 			ps.S.Push(packets.BotData())
 			continue
 		}

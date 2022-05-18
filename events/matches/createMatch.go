@@ -1,25 +1,25 @@
 package events
 
 import (
-	"github.com/xxdstem/bancho/common"
-	"github.com/xxdstem/bancho/packets"
+	"bancho/common"
+	"bancho/packets"
 	"fmt"
 	"sync"
 )
 
-func CreateMatch(ps common.PackSess){
+func CreateMatch(ps common.PackSess) {
 	packetData := packets.MatchSettings(ps.P)
 	b := common.MatchBeatmap{
-		Name:	packetData.BeatmapName,
-		MD5:	packetData.BeatmapMD5,
-		ID:		packetData.BeatmapID,
+		Name: packetData.BeatmapName,
+		MD5:  packetData.BeatmapMD5,
+		ID:   packetData.BeatmapID,
 	}
 	m := common.Match{
-		Name:			packetData.Name,
-		CreatorID: 		packetData.CreatorID,
-		HostID: 		packetData.CreatorID,
-		Mutex: 			&sync.Mutex{},
-		Beatmap:		b,
+		Name:      packetData.Name,
+		CreatorID: packetData.CreatorID,
+		HostID:    packetData.CreatorID,
+		Mutex:     &sync.Mutex{},
+		Beatmap:   b,
 	}
 	for i := 0; i < packetData.Slots; i++ {
 		m.Players[i].Status = 1

@@ -1,25 +1,26 @@
 package main
 
 import (
-	"net/http"
-	"fmt"
-	"os"
-	"encoding/json"
-	"io/ioutil"
-	"io"
-	"time"
-	"strconv"
+	"bancho/common"
+	"bancho/handlers"
 	"bytes"
 	"compress/gzip"
+	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strconv"
 	"strings"
-	"github.com/xxdstem/bancho/handlers"
-	"github.com/xxdstem/bancho/common"
+	"time"
+
 	"github.com/jmoiron/sqlx"
 )
+
 const ProtocolVersion = 19
 
 var cnf Config
-
 
 type gzipResponseWriter struct {
 	io.Writer
@@ -31,8 +32,8 @@ func (w gzipResponseWriter) Write(b []byte) (int, error) {
 }
 
 type Config struct {
-	DSN    		string      	`json:"dsn"` 
-	Port		int				`json:"port"`
+	DSN  string `json:"dsn"`
+	Port int    `json:"port"`
 }
 
 type ConnectionHandler struct{}
@@ -90,10 +91,10 @@ func (c ConnectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	flusher.Flush()
 }
 
-func initConfig(){
+func initConfig() {
 	jsonFile, err := os.Open("config.json")
-    // if we os.Open returns an error then handle it
-    if err != nil {
+	// if we os.Open returns an error then handle it
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -105,7 +106,7 @@ func initConfig(){
 	json.Unmarshal(byteValue, &cnf)
 }
 
-func main(){
+func main() {
 	initConfig()
 	common.Init()
 	common.DB, _ = sqlx.Open("mysql", cnf.DSN)

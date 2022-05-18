@@ -1,84 +1,85 @@
 package packets
 
 import (
-	"github.com/bnch/uleb128"
-	"bytes"	
+	"bancho/common"
+	"bytes"
 	"encoding/binary"
-	"github.com/xxdstem/bancho/common"
+
+	"github.com/bnch/uleb128"
 )
 
 func MakePacket(t uint16, packets []Packet) common.FinalPacket {
 	b := new(bytes.Buffer)
 	binary.Write(b, binary.LittleEndian, t)
 	binary.Write(b, binary.LittleEndian, byte(0))
-	
+
 	dataBuffer := new(bytes.Buffer)
-	for _, v := range packets{
-		if v.Type == STRING{
+	for _, v := range packets {
+		if v.Type == STRING {
 			conv, _ := v.Data.(string)
 			binary.Write(dataBuffer, binary.LittleEndian, BanchoString(conv))
-		}else if v.Type == SINT32{
+		} else if v.Type == SINT32 {
 			conv, ok := v.Data.(int)
-			if !ok{
+			if !ok {
 				binary.Write(dataBuffer, binary.LittleEndian, v.Data)
-			}else{
+			} else {
 				binary.Write(dataBuffer, binary.LittleEndian, int32(conv))
 			}
-			
-		}else if v.Type == UINT32{
+
+		} else if v.Type == UINT32 {
 			conv, ok := v.Data.(int)
-			if !ok{
+			if !ok {
 				binary.Write(dataBuffer, binary.LittleEndian, v.Data)
-			}else{
+			} else {
 				binary.Write(dataBuffer, binary.LittleEndian, uint32(conv))
 			}
-		}else if v.Type == SINT16{
+		} else if v.Type == SINT16 {
 			conv, ok := v.Data.(int)
-			if !ok{
+			if !ok {
 				binary.Write(dataBuffer, binary.LittleEndian, v.Data)
-			}else{
+			} else {
 				binary.Write(dataBuffer, binary.LittleEndian, int16(conv))
 			}
-		}else if v.Type == UINT16{
+		} else if v.Type == UINT16 {
 			conv, ok := v.Data.(int)
-			if !ok{
+			if !ok {
 				binary.Write(dataBuffer, binary.LittleEndian, v.Data)
-			}else{
+			} else {
 				binary.Write(dataBuffer, binary.LittleEndian, uint16(conv))
 			}
-		}else if v.Type == SINT64{
+		} else if v.Type == SINT64 {
 			conv, ok := v.Data.(int)
-			if !ok{
+			if !ok {
 				binary.Write(dataBuffer, binary.LittleEndian, v.Data)
-			}else{
+			} else {
 				binary.Write(dataBuffer, binary.LittleEndian, int64(conv))
 			}
-		}else if v.Type == UINT64{
+		} else if v.Type == UINT64 {
 			conv, ok := v.Data.(int)
-			if !ok{
+			if !ok {
 				binary.Write(dataBuffer, binary.LittleEndian, v.Data)
-			}else{
+			} else {
 				binary.Write(dataBuffer, binary.LittleEndian, uint64(conv))
 			}
-		}else if v.Type == FLOAT{
+		} else if v.Type == FLOAT {
 			conv, ok := v.Data.(float64)
-			if !ok{
+			if !ok {
 				binary.Write(dataBuffer, binary.LittleEndian, v.Data)
-			}else{
+			} else {
 				binary.Write(dataBuffer, binary.LittleEndian, float32(conv))
 			}
-		}else if v.Type == BYTE{
+		} else if v.Type == BYTE {
 			conv, ok := v.Data.(int)
-			if !ok{
+			if !ok {
 				binary.Write(dataBuffer, binary.LittleEndian, v.Data)
-			}else{
+			} else {
 				binary.Write(dataBuffer, binary.LittleEndian, byte(conv))
 			}
-		}else if v.Type == INT_LIST{
+		} else if v.Type == INT_LIST {
 			conv, _ := v.Data.([]int32)
 			binary.Write(dataBuffer, binary.LittleEndian, uint16(len(conv)))
 			binary.Write(dataBuffer, binary.LittleEndian, conv)
-		}else{
+		} else {
 			binary.Write(dataBuffer, binary.LittleEndian, v.Data)
 		}
 	}

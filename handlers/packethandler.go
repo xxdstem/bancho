@@ -1,21 +1,20 @@
 package handlers
 
 import (
-	"github.com/xxdstem/bancho/packets"
-	"io"
+	"bancho/packets"
 	"fmt"
-	"time"
+	"io"
 	"sync"
+	"time"
 
-	"runtime/debug"
-	"container/list"
+	"bancho/common"
+	"bancho/events"
 	"bytes"
-	"git.zxq.co/ripple/nuclearbancho/inbound"
-	"github.com/xxdstem/bancho/common"
-	"github.com/xxdstem/bancho/events"
+	"container/list"
+	"runtime/debug"
+
+	"bancho/inbound"
 )
-
-
 
 type UserDataInfo struct {
 	ID         int32
@@ -27,7 +26,8 @@ type UserDataInfo struct {
 	Latitude   float32
 	Rank       uint32
 }
-func Handle(input []byte, output io.Writer, token string) (string, error){
+
+func Handle(input []byte, output io.Writer, token string) (string, error) {
 	defer func() {
 		c := recover()
 		if c != nil {
@@ -42,7 +42,7 @@ func Handle(input []byte, output io.Writer, token string) (string, error){
 		sendBackToken = true
 		token, _, _ = events.Login(input)
 		self = common.GetSession(token)
-	}else if self = common.GetSession(token); self == nil || self.User.ID == 0 {
+	} else if self = common.GetSession(token); self == nil || self.User.ID == 0 {
 		sendBackToken = true
 		token = common.GenerateGUID()
 		self = &common.Session{
@@ -57,7 +57,7 @@ func Handle(input []byte, output io.Writer, token string) (string, error){
 			packets.OrangeNotification("yo"),
 			packets.UserID(-5),
 		)
-	}else{
+	} else {
 		inputReader := bytes.NewReader(input)
 		for {
 			// Find a new packet from input
@@ -95,5 +95,3 @@ func Handle(input []byte, output io.Writer, token string) (string, error){
 	}
 	return "", nil
 }
-
-
