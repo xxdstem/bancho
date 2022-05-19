@@ -170,5 +170,10 @@ func DisposeMatch(matchID uint32) common.FinalPacket {
 }
 
 func LogOut(userID int32) common.FinalPacket {
-	return MakePacket(OsuExit, []Packet{{userID, SINT32}})
+	return MakePacket(BanchoHandleUserQuit, []Packet{{userID, SINT32}, {0, BYTE}})
 }
+
+func SendMessage(sender *common.User, destination string, message string) common.FinalPacket {
+	return MakePacket(BanchoSendMessage, []Packet{{sender.Name, STRING}, {message, STRING}, {destination, STRING}, {sender.ID, SINT32}})
+}
+

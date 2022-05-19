@@ -38,4 +38,7 @@ func Init(){
 	NewStream("main")
 	NewStream("lobby")
 	
+	// TODO: Initialize chat streams from DB
+	NewStream("chat/#osu")
+	NewStream("chat/#lobby")
 }

@@ -40,6 +40,8 @@ func Login(input []byte) (string, bool, error) {
 	common.UidToSessionMutex.Unlock()
 	s := common.GetStream("main")
 	s.Subscribe(guid)
+	s = common.GetStream("chat/#osu")
+	s.Subscribe(guid)
 	go s.Send(packets.UserPresence(int32(sess.User.ID)))
 	go s.Send(packets.UserData(&sess.User))
 	go sendPlayersStats(sess)
