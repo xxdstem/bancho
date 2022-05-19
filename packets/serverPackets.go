@@ -170,3 +170,7 @@ func MatchDataFull(m *common.Match, packetID uint16, censored bool) common.Final
 func DisposeMatch(matchID uint32) common.FinalPacket {
 	return MakePacket(BanchoMatchDisband, []Packet{{matchID, UINT32}})
 }
+
+func LogOut(userID int32) common.FinalPacket {
+	return MakePacket(OsuExit, []Packet{{userID, SINT32}})
+}

@@ -24,6 +24,8 @@ func HandleEvent(ps common.PackSess) {
 		events.ReturnUserStats(ps)
 	case packets.OsuLobbyJoin:
 		events.JoinLobby(ps)
+	case packets.OsuExit:
+		events.LogOut(ps)
 	case packets.OsuLobbyPart:
 		events.PartLobby(ps)
 	case packets.OsuMatchCreate:
