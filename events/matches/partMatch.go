@@ -3,7 +3,7 @@ package events
 import (
 	"bancho/common"
 	"bancho/packets"
-	"fmt"
+	"bancho/common/log"
 )
 
 func PartMatch(ps common.PackSess) {
@@ -12,11 +12,11 @@ func PartMatch(ps common.PackSess) {
 	if dispose {
 		s := common.GetStream("lobby")
 		s.Send(packets.DisposeMatch(matchID))
-		fmt.Println("pushing dispose match")
+		log.Debug("User %d: Disposing match #%d", ps.S.User.ID, matchID)
 	} else {
-		fmt.Println("just updatin")
+		log.Debug("User %d: Updating match #%d", ps.S.User.ID, matchID)
 		UpdateMatch(ps)
 	}
 
-	fmt.Println("leaving match!")
+	log.Debug("User %d: Leaving match #%d", ps.S.User.ID, matchID)
 }

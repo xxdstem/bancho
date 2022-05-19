@@ -1,7 +1,9 @@
 package common
 
-import "sync"
-import "fmt"
+import (
+	"sync"
+	"bancho/common/log"
+)
 
 type Match struct {
 	ID        	uint32
@@ -52,7 +54,7 @@ func DisposeMatch(m *Match) {
 	MatchesMutex.Lock()
 	defer MatchesMutex.Unlock()
 	Matches[int(m.ID)] = nil
-	fmt.Println("disposing match")
+	log.Debug("disposing match %d", m.ID)
 }
 
 

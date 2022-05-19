@@ -4,6 +4,7 @@ import (
 	"sync"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	log "bancho/common/log"
 )
 
 var DB *sqlx.DB
@@ -19,6 +20,8 @@ var MatchesMutex *sync.RWMutex
 
 var UidToSession map[int32]*Session
 var UidToSessionMutex *sync.RWMutex
+
+var Log log.Logger
 
 func Init(){
 	SessionsMutex = &sync.RWMutex{}

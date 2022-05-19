@@ -5,14 +5,14 @@ import (
 	"bancho/events"
 	matches "bancho/events/matches"
 	"bancho/packets"
-	"fmt"
+	"bancho/common/log"
 )
 
 func HandleEvent(ps common.PackSess) {
 	if ps.P.ID == 4 {
 		return
 	}
-	fmt.Println("Requested packID: ", ps.P.ID)
+	log.Debug("User %d: Requests PacketID: %d", ps.S.User.ID, ps.P.ID)
 	switch ps.P.ID {
 	case packets.OsuSendUserState:
 		events.UpdateStats(ps)

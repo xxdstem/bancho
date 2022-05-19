@@ -2,15 +2,15 @@ package events
 
 import (
 	"bancho/common"
+	"bancho/common/log"
 	_ "bancho/packets"
-	"fmt"
 )
 
 func ChangeSlot(ps common.PackSess) {
 	match := ps.S.User.Match
 	var slotID uint32
 	ps.P.Unmarshal(&slotID)
-	fmt.Println(ps.S.User.ID, "changed slot to ", slotID)
+	log.Debug("User %d: Changed slot to %d", ps.S.User.ID, slotID)
 	match.Mutex.Lock()
 	defer match.Mutex.Unlock()
 	for id, slot := range match.Players {

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bancho/packets"
-	"fmt"
 	"io"
 	"sync"
 	"time"
@@ -12,7 +11,7 @@ import (
 	"bytes"
 	"container/list"
 	"runtime/debug"
-
+	"bancho/common/log"
 	"bancho/inbound"
 )
 
@@ -31,9 +30,9 @@ func Handle(input []byte, output io.Writer, token string) (string, error) {
 	defer func() {
 		c := recover()
 		if c != nil {
-			fmt.Println("ERROR!!!!!!!11!")
-			fmt.Println(c)
-			fmt.Println(string(debug.Stack()))
+			log.Error("ERROR!!!!!!!11!")
+			log.Error(c)
+			log.Error(string(debug.Stack()))
 		}
 	}()
 	var sendBackToken bool
@@ -63,7 +62,7 @@ func Handle(input []byte, output io.Writer, token string) (string, error) {
 			// Find a new packet from input
 			pack, err := inbound.GetPacket(inputReader)
 			if err != nil && err != io.EOF {
-				fmt.Println(err)
+				log.Error(err)
 			}
 			if !pack.Initialised {
 				break

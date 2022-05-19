@@ -2,7 +2,6 @@ package packets
 
 import (
 	"bancho/common"
-	"fmt"
 )
 
 func LoginFailed() common.FinalPacket {
@@ -52,7 +51,6 @@ func OnlinePlayers() common.FinalPacket {
 			i++
 		}
 	}
-	fmt.Println(users[:i])
 	return MakePacket(96, []Packet{{users[:i], INT_LIST}})
 }
 

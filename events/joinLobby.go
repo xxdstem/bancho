@@ -3,7 +3,7 @@ package events
 import (
 	"bancho/common"
 	"bancho/packets"
-	"fmt"
+	"bancho/common/log"
 )
 
 func JoinLobby(ps common.PackSess) {
@@ -16,5 +16,5 @@ func JoinLobby(ps common.PackSess) {
 			ps.S.Push(packets.MatchDataFull(v, packets.BanchoMatchNew, true))
 		}
 	}
-	fmt.Println("joined lobby :)")
+	log.Debug("User %d: Joined lobby", ps.S.User.ID)
 }

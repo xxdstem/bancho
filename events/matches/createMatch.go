@@ -2,8 +2,8 @@ package events
 
 import (
 	"bancho/common"
+	"bancho/common/log"
 	"bancho/packets"
-	"fmt"
 	"sync"
 )
 
@@ -28,7 +28,7 @@ func CreateMatch(ps common.PackSess) {
 		m.Players[i].Status = 2
 	}
 	match := common.NewMatch(m)
-	fmt.Println("created match #", match.ID)
+	log.Debug("User %d: Created match #%d", ps.S.User.ID, match.ID)
 	ps.S.User.JoinMatch(match)
 	s := common.GetStream("lobby")
 	s.Send(packets.MatchDataFull(match, packets.BanchoMatchNew, true))

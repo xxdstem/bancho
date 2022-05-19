@@ -4,8 +4,6 @@ import (
 	"container/list"
 	"sync"
 	"time"
-
-
 )
 
 
@@ -52,6 +50,14 @@ func NewSession(u User) (*Session, string) {
 	defer SessionsMutex.Unlock()
 	Sessions[tok] = sess
 	return sess, tok
+}
+
+func DeleteSession(s *Session) error{
+
+	if ses, ok := Sessions[s.User.Token]; ok {
+		delete(Sessions, ses.User.Token)
+	}
+	return nil
 }
 
 // GetSession retrieves a session from the available ones.

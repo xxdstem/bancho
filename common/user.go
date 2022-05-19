@@ -1,7 +1,7 @@
 package common
 
 import (
-	"fmt"
+	"bancho/common/log"
 )
 
 // User represents an user online on bancho.
@@ -57,7 +57,7 @@ func (u *User) UpdateStats(mode byte) {
 	`
 	err := DB.QueryRow(statsQuery, u.ID).Scan(&u.Stats.PP, &u.Stats.PlayCount, &u.Stats.Accuracy, &u.Stats.RankedScore, &u.Stats.TotalScore, &u.Stats.Rank)
 	if err != nil{
-		fmt.Println(err)
+		log.Error(err)
 	}
 	u.Stats.Mode = mode
 	// do updates/

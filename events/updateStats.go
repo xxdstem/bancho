@@ -5,8 +5,6 @@ import (
 	"bancho/packets"
 )
 
-// LoginData is the data received by the osu! client upon a login request to bancho.
-
 func UpdateStats(ps common.PackSess) {
 	var newMode byte
 	ps.P.Unmarshal(

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bancho/common"
+	"bancho/common/log"
 	"bancho/handlers"
 	"bytes"
 	"compress/gzip"
@@ -14,7 +15,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
 	"github.com/jmoiron/sqlx"
 )
 
@@ -34,6 +34,7 @@ func (w gzipResponseWriter) Write(b []byte) (int, error) {
 type Config struct {
 	DSN  string `json:"dsn"`
 	Port int    `json:"port"`
+	Debug bool `json:"debug"`
 }
 
 type ConnectionHandler struct{}
@@ -49,7 +50,7 @@ func (c ConnectionHandler) serveHTTPReal(w http.ResponseWriter, r *http.Request)
 	// Get data from request body
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println("Error while attempting to understand request:", err)
+		log.Error("Error while attempting to understand request:", err)
 		return
 	}
 
@@ -61,7 +62,7 @@ func (c ConnectionHandler) serveHTTPReal(w http.ResponseWriter, r *http.Request)
 	buf := new(bytes.Buffer)
 	newToken, err := handlers.Handle(data, buf, r.Header.Get("osu-token"))
 	if err != nil {
-		fmt.Println("Error in bancho:", err)
+		log.Error("Error in bancho:", err)
 	}
 
 	// Finish it up.
@@ -69,7 +70,7 @@ func (c ConnectionHandler) serveHTTPReal(w http.ResponseWriter, r *http.Request)
 		w.Header()["cho-token"] = []string{newToken}
 	}
 	io.Copy(w, buf)
-	fmt.Printf("> Request end - time took: %s\n", time.Since(begin).String())
+	log.Debug("> Request end - time took: %s\n", time.Since(begin).String())
 }
 
 func (c ConnectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +81,7 @@ func (c ConnectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Set up the chunked transfer.
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		fmt.Println("expected http.ResponseWriter to be an http.Flusher")
+		log.Error("expected http.ResponseWriter to be an http.Flusher")
 		return
 	}
 	w.Header().Set("Content-Encoding", "gzip")
@@ -95,12 +96,12 @@ func initConfig() {
 	jsonFile, err := os.Open("config.json")
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 	json.Unmarshal(byteValue, &cnf)
@@ -109,9 +110,15 @@ func initConfig() {
 func main() {
 	initConfig()
 	common.Init()
-	common.DB, _ = sqlx.Open("mysql", cnf.DSN)
-	fmt.Println("connected to dB!")
+	db, err := sqlx.Open("mysql", cnf.DSN)
+	if err != nil{
+		log.Error("Error while connecting to mysql!", err)
+		panic(nil)
+	}
+	common.DB = db
+	log.Info("connected to mysql!")
 	defer common.DB.Close()
 	handler := &ConnectionHandler{}
+	log.Info("Listening on :%d\n", cnf.Port)
 	http.ListenAndServe(fmt.Sprintf(":%d", cnf.Port), handler)
 }

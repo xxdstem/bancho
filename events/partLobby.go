@@ -2,11 +2,11 @@ package events
 
 import (
 	"bancho/common"
-	"fmt"
+	"bancho/common/log"
 )
 
 func PartLobby(ps common.PackSess) {
 	s := common.GetStream("lobby")
 	s.Unsubscribe(ps.S.User.Token)
-	fmt.Println("part lobby :(")
+	log.Debug("User %d: Parted lobby", ps.S.User.ID)
 }
