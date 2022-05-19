@@ -2,7 +2,6 @@ package common
 
 import (
 	"sync"
-
 )
 
 var streams map[string]*Stream
@@ -29,8 +28,6 @@ func NewStream(name string) *Stream {
 
 // GetStream returns an existing stream if it does exist, nil otherwise.
 func GetStream(name string) *Stream {
-	streamsMutex.RLock()
-	defer streamsMutex.RUnlock()
 	if stream, ok := streams[name]; ok {
 		return stream
 	}
@@ -86,19 +83,17 @@ func (s *Stream) unsubscribe(u string) {
 
 // Subscribers is a function because we want to make it sure to be read-only.
 func (s *Stream) Subscribers() []string {
-	s.subsMutex.RLock()
-	defer s.subsMutex.RUnlock()
 	return s.subscribers
 }
 
 // IsSubscribed checks whether an user is already subscribed.
 func (s *Stream) IsSubscribed(u string) bool {
-	s.subsMutex.RLock()
-	defer s.subsMutex.RUnlock()
 	return s.isSubscribed(u)
 }
 
 func (s *Stream) isSubscribed(u string) bool {
+	s.subsMutex.RLock()
+	defer s.subsMutex.RUnlock()
 	for _, v := range s.subscribers {
 		if u == v {
 			return true
@@ -119,16 +114,7 @@ func (s *Stream) Send(p FinalPacket) {
 }
 func (s *Stream) send(p FinalPacket) {
 	lSessions := CopySessions()
-	s.subsMutex.RLock()
-	subs := make([]string, len(s.subscribers))
-	copy(subs, s.subscribers)
-	s.subsMutex.RUnlock()
-	for _, u := range subs {
-		sess, ok := lSessions[u]
-		if !ok {
-			s.Unsubscribe(u)
-			continue
-		}
+	for _, sess := range lSessions {
 		sess.Push(p)
 	}
 }

@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-
 // Push appends an element to the current session.
 func (s Session) Push(val ...FinalPacket) {
 	//dumper := banchoreader.New()
@@ -52,10 +51,12 @@ func NewSession(u User) (*Session, string) {
 	return sess, tok
 }
 
-func DeleteSession(s *Session) error{
+func DeleteSession(s *Session) error {
 
 	if ses, ok := Sessions[s.User.Token]; ok {
 		delete(Sessions, ses.User.Token)
+		delete(UsernameToSession, s.User.SafeName)
+		delete(UidToSession, s.User.ID)
 	}
 	return nil
 }
@@ -78,10 +79,18 @@ func CopySessions() map[string]*Session {
 	return ret
 }
 
-// GetSessionByID returns a session retrieving it using its user's ID.
+// GetSessionByID returns a session retrieving it using his ID.
 func GetSessionByID(id int32) *Session {
 	UidToSessionMutex.RLock()
 	defer UidToSessionMutex.RUnlock()
 	v, _ := UidToSession[id]
+	return v
+}
+
+// GetSessionByUsername returns a session retrieving it using his username
+func GetSessionByUsername(username string) *Session {
+	UsernameToSessionMutex.RLock()
+	defer UsernameToSessionMutex.RUnlock()
+	v, _ := UsernameToSession[username]
 	return v
 }

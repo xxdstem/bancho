@@ -36,14 +36,19 @@ func Login(input []byte) (string, bool, error) {
 	sess.Push(packets.ChannelListingComplete())
 
 	common.UidToSessionMutex.Lock()
+	common.UsernameToSessionMutex.Lock()
+
+	common.UsernameToSession[sess.User.SafeName] = sess
 	common.UidToSession[int32(sess.User.ID)] = sess
+
 	common.UidToSessionMutex.Unlock()
-	s := common.GetStream("main")
-	s.Subscribe(guid)
-	s = common.GetStream("chat/#osu")
-	s.Subscribe(guid)
-	go s.Send(packets.UserPresence(int32(sess.User.ID)))
-	go s.Send(packets.UserData(&sess.User))
+	common.UsernameToSessionMutex.Unlock()
+
+	main := common.GetStream("main")
+	main.Subscribe(guid)
+	common.GetStream("chat/#osu").Subscribe(guid)
+	go main.Send(packets.UserPresence(int32(sess.User.ID)))
+	go main.Send(packets.UserData(&sess.User))
 	go sendPlayersStats(sess)
 	return guid, false, nil
 }
@@ -63,7 +68,7 @@ func Unmarshal(input []byte) (l common.LoginData, e error) {
 		e = errors.New("logindata: cannot unmarshal, got " + strconv.Itoa(len(lines)) + " lines as an input, want 4")
 		return
 	}
-	l.Username = lines[0]
+	l.Username = strings.TrimSpace(lines[0])
 	l.Password = lines[1]
 	l.HardwareData = strings.Split(lines[2], "|")
 	l.HardwareHashes = strings.Split(lines[3], ":")

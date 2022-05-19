@@ -174,6 +174,5 @@ func LogOut(userID int32) common.FinalPacket {
 }
 
 func SendMessage(sender *common.User, destination string, message string) common.FinalPacket {
-	return MakePacket(BanchoSendMessage, []Packet{{sender.Name, STRING}, {message, STRING}, {destination, STRING}, {sender.ID, SINT32}})
+	return MakePacket(BanchoSendMessage, []Packet{{sender.SafeName, STRING}, {message, STRING}, {destination, STRING}, {sender.ID, SINT32}})
 }
-
