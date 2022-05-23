@@ -18,7 +18,7 @@ func UpdateStats(ps common.PackSess) {
 	if ps.S.User.Stats.Mode != newMode {
 		ps.S.User.UpdateStats(newMode)
 	}
-	ps.S.Push(packets.UserDataFull(&ps.S.User))
+	ps.S.Push(packets.UserDataFull(ps.S.User))
 	/*
 		var usersRequested []int32
 		err := ps.p.Unmarshal(&usersRequested)

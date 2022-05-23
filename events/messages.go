@@ -18,7 +18,7 @@ func HandlePublicMessage(ps common.PackSess) {
 	}
 	s := common.GetStream(fmt.Sprintf("chat/%s", destination))
 	if s != nil {
-		packet := packets.SendMessage(&ps.S.User, destination, message)
+		packet := packets.SendMessage(ps.S.User, destination, message)
 		packet.Ignored = append(packet.Ignored, ps.S.User.Token)
 		s.Send(packet)
 	}
@@ -35,5 +35,5 @@ func HandlePrivateMessage(ps common.PackSess) {
 		log.Error(err)
 	}
 	sess := common.GetSessionByUsername(common.SafeUsername(destination))
-	sess.Push(packets.SendMessage(&ps.S.User, destination, message))
+	sess.Push(packets.SendMessage(ps.S.User, destination, message))
 }

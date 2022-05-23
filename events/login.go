@@ -2,6 +2,7 @@ package events
 
 import (
 	"bancho/common"
+	"bancho/common/log"
 	"bancho/packets"
 	"errors"
 	"strconv"
@@ -20,6 +21,7 @@ func Login(input []byte) (string, bool, error) {
 	if err != nil {
 		sess.Push(packets.UserID(-1))
 	}
+	log.Warning("", sess.User)
 	sess.User.UpdateStats(0)
 	sess.Push(
 		packets.SilenceEnd(0),
@@ -27,8 +29,8 @@ func Login(input []byte) (string, bool, error) {
 		packets.ChoProtocol(19),
 		packets.UserPrivileges(),
 		packets.FriendList([]int32{0}),
-		packets.UserData(&sess.User),
-		packets.UserDataFull(&sess.User),
+		packets.UserData(sess.User),
+		packets.UserDataFull(sess.User),
 		packets.OnlinePlayers(),
 		packets.ChannelJoin(),
 		packets.ChannelInfo(),
@@ -45,10 +47,18 @@ func Login(input []byte) (string, bool, error) {
 	common.UsernameToSessionMutex.Unlock()
 
 	main := common.GetStream("main")
+	if main == nil {
+		log.Error("niggers", main)
+	}
 	main.Subscribe(guid)
-	common.GetStream("chat/#osu").Subscribe(guid)
+	chat := common.GetStream("chat/#osu")
+	if chat == nil {
+		log.Error("for some reason #osu chat is unknown!")
+	}
+	chat.Subscribe(guid)
+
 	go main.Send(packets.UserPresence(int32(sess.User.ID)))
-	go main.Send(packets.UserData(&sess.User))
+	go main.Send(packets.UserData(sess.User))
 	go sendPlayersStats(sess)
 	return guid, false, nil
 }
@@ -56,7 +66,7 @@ func Login(input []byte) (string, bool, error) {
 func sendPlayersStats(s *common.Session) {
 	for _, session := range common.CopySessions() {
 		if session.User.ID != s.User.ID {
-			s.Push(packets.UserData(&session.User))
+			s.Push(packets.UserData(session.User))
 		}
 	}
 }

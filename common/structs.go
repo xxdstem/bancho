@@ -19,7 +19,7 @@ type LoginData struct {
 type Session struct {
 	Stream      *list.List
 	Mutex       *sync.Mutex
-	User        User
+	User        *User
 	LastRequest time.Time
 }
 

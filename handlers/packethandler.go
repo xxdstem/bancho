@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"bancho/common"
+	"bancho/common/log"
 	"bancho/events"
+	"bancho/inbound"
 	"bytes"
 	"container/list"
 	"runtime/debug"
-	"bancho/common/log"
-	"bancho/inbound"
 )
 
 type UserDataInfo struct {
@@ -43,13 +43,14 @@ func Handle(input []byte, output io.Writer, token string) (string, error) {
 		self = common.GetSession(token)
 	} else if self = common.GetSession(token); self == nil || self.User.ID == 0 {
 		sendBackToken = true
+		common.SessionsMutex.Lock()
 		token = common.GenerateGUID()
 		self = &common.Session{
+			User:        &common.User{},
 			LastRequest: time.Now(),
 			Stream:      list.New(),
 			Mutex:       &sync.Mutex{},
 		}
-		common.SessionsMutex.Lock()
 		common.Sessions[token] = self
 		common.SessionsMutex.Unlock()
 		self.Push(

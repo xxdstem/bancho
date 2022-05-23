@@ -7,7 +7,7 @@ import (
 )
 
 // Push appends an element to the current session.
-func (s Session) Push(val ...FinalPacket) {
+func (s *Session) Push(val ...FinalPacket) {
 	//dumper := banchoreader.New()
 	//dumper.Colored = true
 	s.Mutex.Lock()
@@ -42,7 +42,7 @@ func NewSession(u User) (*Session, string) {
 	sess := &Session{
 		Stream:      list.New(),
 		Mutex:       &sync.Mutex{},
-		User:        u,
+		User:        &u,
 		LastRequest: time.Now(),
 	}
 	SessionsMutex.Lock()

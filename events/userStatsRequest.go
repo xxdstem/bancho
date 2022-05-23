@@ -1,8 +1,8 @@
 package events
 
 import (
-	"bancho/packets"
 	"bancho/common"
+	"bancho/packets"
 )
 
 func UserStatsRequest(ps common.PackSess) {
@@ -14,13 +14,13 @@ func UserStatsRequest(ps common.PackSess) {
 	common.UidToSessionMutex.Lock()
 	defer common.UidToSessionMutex.Unlock()
 	for _, v := range usersRequested {
-		if v == ps.S.User.ID{
+		if v == ps.S.User.ID {
 			continue
 		}
 		uSession, ok := common.UidToSession[v]
 		if !ok {
 			continue
 		}
-		ps.S.Push(packets.UserDataFull(&uSession.User))
+		ps.S.Push(packets.UserDataFull(uSession.User))
 	}
 }

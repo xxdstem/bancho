@@ -2,6 +2,7 @@ package packets
 
 import (
 	"bancho/common"
+	"bancho/common/log"
 )
 
 func LoginFailed() common.FinalPacket {
@@ -42,6 +43,7 @@ func OnlinePlayers() common.FinalPacket {
 	users[0] = 999
 	i := 1
 	for _, sess := range common.CopySessions() {
+		log.Warning("", sess)
 		if sess != nil && sess.User.ID != 0 {
 			if i >= len(users) {
 				users = append(users, sess.User.ID)

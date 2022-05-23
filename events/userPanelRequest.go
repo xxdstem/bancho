@@ -22,6 +22,6 @@ func UserPanelRequest(ps common.PackSess) {
 		if !ok {
 			continue
 		}
-		ps.S.Push(packets.UserData(&uSession.User))
+		ps.S.Push(packets.UserData(uSession.User))
 	}
 }

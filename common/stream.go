@@ -4,8 +4,8 @@ import (
 	"sync"
 )
 
-var streams map[string]*Stream
-var streamsMutex *sync.RWMutex
+var streams map[string]*Stream = make(map[string]*Stream)
+var streamsMutex *sync.RWMutex = &sync.RWMutex{}
 
 // Stream is a way to handle sending of packets to multiple users.
 type Stream struct {
