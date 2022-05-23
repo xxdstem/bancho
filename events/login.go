@@ -21,7 +21,6 @@ func Login(input []byte) (string, bool, error) {
 	if err != nil {
 		sess.Push(packets.UserID(-1))
 	}
-	log.Warning("", sess.User)
 	sess.User.UpdateStats(0)
 	sess.Push(
 		packets.SilenceEnd(0),
