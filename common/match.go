@@ -80,11 +80,19 @@ func (m *Match) getUserSlotID(u int32) int {
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
 	for i, slot := range m.Players {
-		if slot.User.ID == u {
+
+		if slot.User != nil && slot.User.ID == u {
 			return i
 		}
 	}
 	return -1
+}
+
+func (m *Match) TransferHost(slotID uint32) {
+	u := m.Players[slotID].User
+	if u != nil {
+		m.HostID = u.ID
+	}
 }
 
 func (m *Match) UserJoin(u *User) bool {
@@ -108,11 +116,12 @@ func (m *Match) UserJoin(u *User) bool {
 
 func (m *Match) UserLeft(u *User) (bool, bool) {
 	slotID := m.getUserSlotID(u.ID)
+	m.Mutex.Lock()
 	m.Players[slotID].User = nil
 	m.Players[slotID].Team = 0
 	m.Players[slotID].Status = 1
-	m.Mutex.Lock()
-	defer m.Mutex.Unlock()
+
+	m.Mutex.Unlock()
 	if m.countUsers() == 0 {
 		DisposeMatch(m)
 		return true, true

@@ -19,12 +19,13 @@ func PartMatch(ps common.PackSess) {
 
 	if dispose {
 		s := common.GetStream("lobby")
-		s.Send(packets.DisposeMatch(matchID))
+		pack := packets.DisposeMatch(matchID)
+		s.Send(pack)
+		ps.S.Push(pack)
 		log.Debug("User %d: Disposing match #%d", ps.S.User.ID, matchID)
 	} else {
 		log.Debug("User %d: Updating match #%d", ps.S.User.ID, matchID)
 		UpdateMatch(match)
 	}
-
 	log.Debug("User %d: Leaving match #%d", ps.S.User.ID, matchID)
 }

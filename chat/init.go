@@ -14,7 +14,7 @@ var channelsMutex *sync.RWMutex = &sync.RWMutex{}
 
 func NewChannel(name string, temp bool) *common.Channel {
 	channelsMutex.Lock()
-	stream := common.NewStream(fmt.Sprintf("chat/#%s", name))
+	stream := common.NewStream(fmt.Sprintf("chat/%s", name))
 	channels[name] = &common.Channel{
 		ID:         1,
 		Temporary:  temp,

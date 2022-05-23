@@ -44,5 +44,11 @@ func HandleEvent(ps common.PackSess) {
 		matches.ChangeMods(ps)
 	case packets.OsuMatchJoin:
 		matches.JoinMatch(ps)
+	case packets.OsuMatchTransferHost:
+		matches.TransferHost(ps)
+	case packets.OsuMatchHasBeatmap:
+		matches.BeatmapEvent(ps, true)
+	case packets.OsuMatchNoBeatmap:
+		matches.BeatmapEvent(ps, false)
 	}
 }

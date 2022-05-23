@@ -34,6 +34,4 @@ func Init() {
 	})
 	UsernameToSession[botSess.User.SafeName] = botSess
 	UidToSession[int32(botSess.User.ID)] = botSess
-	// TODO: Initialize chat streams from DB
-
 }

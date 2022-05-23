@@ -34,6 +34,12 @@ func JoinMatch(pack inbound.BasePacket) (uint32, string) {
 	return id, pw
 }
 
+func Slot(pack inbound.BasePacket) uint32 {
+	var slotID uint32
+	pack.Unmarshal(&slotID)
+	return slotID
+}
+
 func MatchMods(pack inbound.BasePacket) int32 {
 	var m int32
 	pack.Unmarshal(&m)
