@@ -1,10 +1,10 @@
 package events
 
 import (
+	"bancho/chat"
 	"bancho/common"
 	"bancho/common/log"
 	"bancho/packets"
-	"fmt"
 )
 
 func HandlePublicMessage(ps common.PackSess) {
@@ -15,13 +15,18 @@ func HandlePublicMessage(ps common.PackSess) {
 	err := ps.P.Unmarshal(&message, &message, &destination)
 	if err != nil {
 		log.Error(err)
+		return
 	}
-	s := common.GetStream(fmt.Sprintf("chat/%s", destination))
-	if s != nil {
-		packet := packets.SendMessage(ps.S.User, destination, message)
-		packet.Ignored = append(packet.Ignored, ps.S.User.Token)
-		s.Send(packet)
+
+	ch := chat.GetChannel(destination)
+
+	if ch == nil {
+		log.Error("Empty channel %s?", destination)
+		return
 	}
+
+	ch.SendMessage(ps.S.User, message)
+
 	log.Debug("User %d: Public message: %s, dest: %s", ps.S.User.ID, message, destination)
 }
 
@@ -35,5 +40,5 @@ func HandlePrivateMessage(ps common.PackSess) {
 		log.Error(err)
 	}
 	sess := common.GetSessionByUsername(common.SafeUsername(destination))
-	sess.Push(packets.SendMessage(ps.S.User, destination, message))
+	sess.Push(packets.SendMessage(ps.S.User.Name, ps.S.User.ID, destination, message))
 }

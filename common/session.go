@@ -1,13 +1,14 @@
 package common
 
 import (
+	"bancho/packets"
 	"container/list"
 	"sync"
 	"time"
 )
 
 // Push appends an element to the current session.
-func (s *Session) Push(val ...FinalPacket) {
+func (s *Session) Push(val ...packets.FinalPacket) {
 	//dumper := banchoreader.New()
 	//dumper.Colored = true
 	s.Mutex.Lock()
@@ -39,6 +40,7 @@ func NewSession(u User) (*Session, string) {
 		}
 	}
 	u.Token = tok
+	u.mutex = &sync.RWMutex{}
 	sess := &Session{
 		Stream:      list.New(),
 		Mutex:       &sync.Mutex{},

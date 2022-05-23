@@ -2,8 +2,9 @@ package events
 
 import (
 	"bancho/common"
-	"bancho/packets"
 	"bancho/common/log"
+	"bancho/packets"
+	"bancho/packets/userPackets"
 )
 
 func JoinLobby(ps common.PackSess) {
@@ -13,7 +14,7 @@ func JoinLobby(ps common.PackSess) {
 	defer common.MatchesMutex.Unlock()
 	for _, v := range common.Matches {
 		if v != nil {
-			ps.S.Push(packets.MatchDataFull(v, packets.BanchoMatchNew, true))
+			ps.S.Push(userPackets.MatchDataFull(v, packets.BanchoMatchNew, true))
 		}
 	}
 	log.Debug("User %d: Joined lobby", ps.S.User.ID)

@@ -1,6 +1,7 @@
 package common
 
 import (
+	"bancho/packets"
 	"sync"
 )
 
@@ -109,10 +110,10 @@ func (s *Stream) Name() string {
 }
 
 // Send sends something to all the users in the stream.
-func (s *Stream) Send(p FinalPacket) {
+func (s *Stream) Send(p packets.FinalPacket) {
 	s.send(p)
 }
-func (s *Stream) send(p FinalPacket) {
+func (s *Stream) send(p packets.FinalPacket) {
 	lSessions := CopySessions()
 	for _, sess := range lSessions {
 		sess.Push(p)

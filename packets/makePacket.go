@@ -1,14 +1,15 @@
 package packets
 
 import (
-	"bancho/common"
+	//"bancho/common"
+
 	"bytes"
 	"encoding/binary"
 
 	"github.com/bnch/uleb128"
 )
 
-func MakePacket(t uint16, packets []Packet) common.FinalPacket {
+func MakePacket(t uint16, packets []Packet) FinalPacket {
 	b := new(bytes.Buffer)
 	binary.Write(b, binary.LittleEndian, t)
 	binary.Write(b, binary.LittleEndian, byte(0))
@@ -86,7 +87,7 @@ func MakePacket(t uint16, packets []Packet) common.FinalPacket {
 	endB := dataBuffer.Bytes()
 	binary.Write(b, binary.LittleEndian, uint32(len(endB)))
 	binary.Write(b, binary.LittleEndian, endB)
-	return common.FinalPacket{
+	return FinalPacket{
 		Content: b.Bytes(),
 	}
 }

@@ -2,7 +2,7 @@ package events
 
 import (
 	"bancho/common"
-	"bancho/packets"
+	"bancho/packets/userPackets"
 )
 
 func UserStatsRequest(ps common.PackSess) {
@@ -21,6 +21,6 @@ func UserStatsRequest(ps common.PackSess) {
 		if !ok {
 			continue
 		}
-		ps.S.Push(packets.UserDataFull(uSession.User))
+		ps.S.Push(userPackets.UserDataFull(uSession.User))
 	}
 }

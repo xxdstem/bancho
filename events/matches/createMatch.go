@@ -4,6 +4,7 @@ import (
 	"bancho/common"
 	"bancho/common/log"
 	"bancho/packets"
+	"bancho/packets/userPackets"
 	"sync"
 )
 
@@ -31,6 +32,6 @@ func CreateMatch(ps common.PackSess) {
 	log.Debug("User %d: Created match #%d", ps.S.User.ID, match.ID)
 	ps.S.User.JoinMatch(match)
 	s := common.GetStream("lobby")
-	s.Send(packets.MatchDataFull(match, packets.BanchoMatchNew, true))
-	ps.S.Push(packets.MatchDataFull(match, packets.BanchoMatchJoinSuccess, false))
+	s.Send(userPackets.MatchDataFull(match, packets.BanchoMatchNew, true))
+	ps.S.Push(userPackets.MatchDataFull(match, packets.BanchoMatchJoinSuccess, false))
 }

@@ -28,6 +28,14 @@ func Init() {
 	NewStream("lobby")
 	NewStream("chat/#osu")
 	NewStream("chat/#lobby")
+	botSess, _ := NewSession(User{
+		ID:       999,
+		Name:     "GoBot",
+		SafeName: "gobot",
+		mutex:    &sync.RWMutex{},
+	})
+	UsernameToSession[botSess.User.SafeName] = botSess
+	UidToSession[int32(botSess.User.ID)] = botSess
 	// TODO: Initialize chat streams from DB
 
 }

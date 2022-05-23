@@ -23,12 +23,6 @@ type Session struct {
 	LastRequest time.Time
 }
 
-type FinalPacket struct {
-	Content []byte
-	// Ignored is a series of users of which this packet should NEVER arrive.
-	Ignored []string
-}
-
 type PackSess struct {
 	P inbound.BasePacket
 	S *Session

@@ -3,6 +3,7 @@ package events
 import (
 	"bancho/common"
 	"bancho/packets"
+	"bancho/packets/userPackets"
 )
 
 func UserPanelRequest(ps common.PackSess) {
@@ -22,6 +23,6 @@ func UserPanelRequest(ps common.PackSess) {
 		if !ok {
 			continue
 		}
-		ps.S.Push(packets.UserData(uSession.User))
+		ps.S.Push(userPackets.UserData(uSession.User))
 	}
 }

@@ -1,8 +1,14 @@
 package packets
 
-type Packet struct{
+type Packet struct {
 	Data interface{}
 	Type int32
+}
+
+type FinalPacket struct {
+	Content []byte
+	// Ignored is a series of users of which this packet should NEVER arrive.
+	Ignored []string
 }
 
 const (
@@ -53,9 +59,9 @@ const (
 	OsuLobbyJoin                         // Null - client joined lobby
 	OsuMatchCreate                       // client created a new lobby
 	OsuMatchJoin                         // sends a request to bancho (join lobby)
-	OsuMatchPart                    	
-	BanchoLobbyJoinOBSOLETE              // according to the mid-2014 decompiled code this is when bancho informs a client about a new player that joins a lobby this is obsolete now.
-	BanchoLobbyPartOBSOLETE              // according to the mid-2014 decompiled code this is when bancho informs a client about a new player that joins a lobby this is obsolete now.
+	OsuMatchPart
+	BanchoLobbyJoinOBSOLETE // according to the mid-2014 decompiled code this is when bancho informs a client about a new player that joins a lobby this is obsolete now.
+	BanchoLobbyPartOBSOLETE // according to the mid-2014 decompiled code this is when bancho informs a client about a new player that joins a lobby this is obsolete now.
 	BanchoMatchJoinSuccess
 	BanchoMatchJoinFail
 	OsuMatchChangeSlot

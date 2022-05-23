@@ -1,66 +1,49 @@
 package packets
 
-import (
-	"bancho/common"
-)
+//"bancho/common"
 
-func LoginFailed() common.FinalPacket {
+func LoginFailed() FinalPacket {
 	//return MakePacketOLD(5, 4, -1)
 	return MakePacket(5, []Packet{{-1, SINT32}})
 }
 
-func ForceUpdate() common.FinalPacket {
+func ForceUpdate() FinalPacket {
 	return MakePacket(5, []Packet{{-2, SINT32}})
 }
 
-func LoginError() common.FinalPacket {
+func LoginError() FinalPacket {
 	return MakePacket(5, []Packet{{-5, SINT32}})
 }
 
-func UserID(userID int32) common.FinalPacket {
+func UserID(userID int32) FinalPacket {
 	return MakePacket(5, []Packet{{userID, SINT32}})
 }
 
-func SilenceEnd(seconds uint32) common.FinalPacket {
+func SilenceEnd(seconds uint32) FinalPacket {
 	return MakePacket(92, []Packet{{seconds, UINT32}})
 }
 
-func ChoProtocol(version uint32) common.FinalPacket {
+func ChoProtocol(version uint32) FinalPacket {
 	return MakePacket(75, []Packet{{version, UINT32}})
 }
 
-func UserPrivileges() common.FinalPacket {
+func UserPrivileges() FinalPacket {
 	return MakePacket(71, []Packet{{4, UINT32}})
 }
 
-func FriendList(friends []int32) common.FinalPacket {
+func FriendList(friends []int32) FinalPacket {
 	return MakePacket(72, []Packet{{friends, INT_LIST}})
 }
 
-func OnlinePlayers() common.FinalPacket {
-	users := make([]int32, len(common.Sessions)+1)
-	users[0] = 999
-	i := 1
-	for _, sess := range common.CopySessions() {
-		if sess != nil && sess.User.ID != 0 {
-			if i >= len(users) {
-				users = append(users, sess.User.ID)
-			} else {
-				users[i] = sess.User.ID
-			}
-			i++
-		}
-	}
-	return MakePacket(96, []Packet{{users[:i], INT_LIST}})
-}
+//FULL REWORK
 
-func ChannelJoin() common.FinalPacket {
+func ChannelJoin() FinalPacket {
 	return MakePacket(64, []Packet{
 		{"#osu", STRING},
 	})
 }
 
-func ChannelInfo() common.FinalPacket {
+func ChannelInfo() FinalPacket {
 	return MakePacket(65, []Packet{
 		{"#osu", STRING},
 		{"Main channel", STRING},
@@ -68,28 +51,18 @@ func ChannelInfo() common.FinalPacket {
 	})
 }
 
-func ChannelListingComplete() common.FinalPacket {
+func ChannelListingComplete() FinalPacket {
 	return MakePacket(89, []Packet{{0, UINT32}})
 }
 
-func UserData(user *common.User) common.FinalPacket {
-	packetData := []Packet{
-		{user.ID, SINT32},
-		{user.Name, STRING},
-		{27, BYTE},
-		{56, BYTE},
-		{0, BYTE},
-		{0.0, FLOAT},
-		{0.0, FLOAT},
-		{0, UINT32}, //rank?
-	}
-	return MakePacket(83, packetData)
+func SendMessage(sender string, senderID int32, destination string, message string) FinalPacket {
+	return MakePacket(BanchoSendMessage, []Packet{{sender, STRING}, {message, STRING}, {destination, STRING}, {senderID, SINT32}})
 }
 
-func BotData() common.FinalPacket {
+func BotData() FinalPacket {
 	packetData := []Packet{
 		{999, SINT32},
-		{"FokaBot", STRING},
+		{"GoBot", STRING},
 		{27, BYTE},
 		{0, BYTE},
 		{0, BYTE},
@@ -100,79 +73,18 @@ func BotData() common.FinalPacket {
 	return MakePacket(83, packetData)
 }
 
-func UserDataFull(user *common.User) common.FinalPacket {
-	packetData := []Packet{
-		{user.ID, SINT32},
-		{user.Status.Status, BYTE},       //a id
-		{user.Status.Text, STRING},       //a text
-		{user.Status.MD5, STRING},        //a md5
-		{user.Status.Mods, SINT32},       //mods
-		{user.Stats.Mode, BYTE},          //gm
-		{user.Status.BeatmapID, SINT32},  //bid
-		{user.Stats.RankedScore, UINT64}, // rankedscore
-		{user.Stats.Accuracy, FLOAT},     //accuracy
-		{user.Stats.PlayCount, UINT32},   // playcount
-		{user.Stats.TotalScore, UINT64},  // totalScore
-		{user.Stats.Rank, UINT32},        // gameRank
-		{user.Stats.PP, UINT16},          // pp
-
-	}
-	return MakePacket(11, packetData)
-}
-
-func UserPresence(userID int32) common.FinalPacket {
+func UserPresence(userID int32) FinalPacket {
 	return MakePacket(85, []Packet{{userID, SINT32}})
 }
 
-func OrangeNotification(message string) common.FinalPacket {
+func OrangeNotification(message string) FinalPacket {
 	return MakePacket(24, []Packet{{message, STRING}})
 }
 
-func MatchDataFull(m *common.Match, packetID uint16, censored bool) common.FinalPacket {
-	var password string
-	if censored && m.Password != "" {
-		password = "redacted"
-	} else {
-		password = m.Password
-	}
-	pack := []Packet{
-		{uint16(m.ID), UINT16},
-		{byte(0), BYTE},
-		{byte(0), BYTE},
-		{uint32(0), UINT32},
-		{m.Name, STRING},
-		{password, STRING},
-		{m.Beatmap.Name, STRING},
-		{m.Beatmap.ID, UINT32},
-		{m.Beatmap.MD5, STRING},
-	}
-	for _, slot := range m.Players {
-		pack = append(pack, Packet{slot.Status, BYTE})
-	}
-	for _, slot := range m.Players {
-		pack = append(pack, Packet{slot.Team, BYTE})
-	}
-
-	pack = append(pack,
-		Packet{uint32(m.HostID), UINT32},
-
-		Packet{m.HostID, SINT32},
-		Packet{0, BYTE},
-		Packet{0, BYTE},
-		Packet{0, BYTE},
-		Packet{0, UINT32},
-	)
-	return MakePacket(packetID, pack)
-}
-
-func DisposeMatch(matchID uint32) common.FinalPacket {
+func DisposeMatch(matchID uint32) FinalPacket {
 	return MakePacket(BanchoMatchDisband, []Packet{{matchID, UINT32}})
 }
 
-func LogOut(userID int32) common.FinalPacket {
+func LogOut(userID int32) FinalPacket {
 	return MakePacket(BanchoHandleUserQuit, []Packet{{userID, SINT32}, {0, BYTE}})
-}
-
-func SendMessage(sender *common.User, destination string, message string) common.FinalPacket {
-	return MakePacket(BanchoSendMessage, []Packet{{sender.SafeName, STRING}, {message, STRING}, {destination, STRING}, {sender.ID, SINT32}})
 }

@@ -3,6 +3,7 @@ package common
 import (
 	"bancho/common/log"
 	"strings"
+	"sync"
 )
 
 // User represents an user online on bancho.
@@ -20,7 +21,10 @@ type User struct {
 		Longitude float32
 		Latitude  float32
 	}
-	Match *Match
+	Channels []*Channel
+	Match    *Match
+
+	mutex *sync.RWMutex
 }
 
 type UserStatus struct {
@@ -41,6 +45,13 @@ type UserStats struct {
 	Mode        byte
 }
 
+func (u *User) JoinChannel(ch *Channel) {
+	u.mutex.Lock()
+	u.Channels = append(u.Channels, ch)
+	ch.Stream.Subscribe(u.Token)
+	u.mutex.Unlock()
+}
+
 func (u *User) JoinMatch(m *Match) {
 	m.UserJoin(u)
 	u.Match = m
@@ -53,6 +64,8 @@ func (u *User) LeaveMatch() bool {
 }
 
 func (u *User) UpdateStats(mode byte) {
+	u.mutex.Lock()
+	defer u.mutex.Unlock()
 	modeText := IntToGameMode(mode)
 	statsQuery := `
 	SELECT pp_` + modeText + `, playcount_` + modeText + `, avg_accuracy_` + modeText + `/100, ranked_score_` + modeText + `, total_score_` + modeText + `, 0 FROM users_stats WHERE id = ?
@@ -63,6 +76,7 @@ func (u *User) UpdateStats(mode byte) {
 	}
 	u.SafeName = SafeUsername(u.Name)
 	u.Stats.Mode = mode
+
 	// do updates/
 }
 
