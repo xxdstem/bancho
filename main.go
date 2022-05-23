@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -32,9 +33,9 @@ func (w gzipResponseWriter) Write(b []byte) (int, error) {
 }
 
 type Config struct {
-	DSN  string `json:"dsn"`
-	Port int    `json:"port"`
-	Debug bool `json:"debug"`
+	DSN   string `json:"dsn"`
+	Port  int    `json:"port"`
+	Debug bool   `json:"debug"`
 }
 
 type ConnectionHandler struct{}
@@ -111,7 +112,7 @@ func main() {
 	initConfig()
 	common.Init()
 	db, err := sqlx.Open("mysql", cnf.DSN)
-	if err != nil{
+	if err != nil {
 		log.Error("Error while connecting to mysql!", err)
 		panic(nil)
 	}
