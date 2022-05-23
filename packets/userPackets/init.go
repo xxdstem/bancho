@@ -58,7 +58,7 @@ func UserDataFull(user *common.User) packets.FinalPacket {
 
 func ChannelJoin(ch *common.Channel) packets.FinalPacket {
 	return packets.MakePacket(64, []packets.Packet{
-		{ch.Name, packets.STRING},
+		{ch.ClientName, packets.STRING},
 	})
 }
 
@@ -94,15 +94,17 @@ func MatchDataFull(m *common.Match, packetID uint16, censored bool) packets.Fina
 	for _, slot := range m.Players {
 		pack = append(pack, packets.Packet{slot.Team, packets.BYTE})
 	}
-
+	for _, slot := range m.Players {
+		if slot.User != nil {
+			pack = append(pack, packets.Packet{uint32(slot.User.ID), packets.UINT32})
+		}
+	}
 	pack = append(pack,
-		packets.Packet{uint32(m.HostID), packets.UINT32},
-
 		packets.Packet{m.HostID, packets.SINT32},
 		packets.Packet{m.Settings.GameMode, packets.BYTE},
-		packets.Packet{0, packets.BYTE},
-		packets.Packet{0, packets.BYTE},
-		packets.Packet{0, packets.UINT32},
+		packets.Packet{m.Settings.ScoringType, packets.BYTE},
+		packets.Packet{m.Settings.TeamType, packets.BYTE},
+		packets.Packet{m.Settings.ModMode, packets.UINT32},
 	)
 	return packets.MakePacket(packetID, pack)
 }

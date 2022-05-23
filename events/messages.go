@@ -6,6 +6,7 @@ import (
 	"bancho/common/log"
 	"bancho/handlers/bot"
 	"bancho/packets"
+	"fmt"
 )
 
 func HandlePublicMessage(ps common.PackSess) {
@@ -18,7 +19,9 @@ func HandlePublicMessage(ps common.PackSess) {
 		log.Error(err)
 		return
 	}
-
+	if destination == "#multiplayer" && ps.S.User.Match != nil {
+		destination = fmt.Sprintf("#multi_%d", ps.S.User.Match.ID)
+	}
 	ch := chat.GetChannel(destination)
 
 	if ch == nil {

@@ -18,7 +18,7 @@ func ChangeSlot(ps common.PackSess) {
 			match.Players[slotID] = match.Players[id]
 			match.Players[id].Status = 1
 			match.Players[id].User = nil
-			UpdateMatch(ps)
+			UpdateMatch(match)
 			return
 		}
 	}

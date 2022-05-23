@@ -26,8 +26,6 @@ var UsernameToSessionMutex *sync.RWMutex = &sync.RWMutex{}
 func Init() {
 	NewStream("main")
 	NewStream("lobby")
-	NewStream("chat/#osu")
-	NewStream("chat/#lobby")
 	botSess, _ := NewSession(User{
 		ID:       999,
 		Name:     "GoBot",

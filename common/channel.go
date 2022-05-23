@@ -18,7 +18,7 @@ type Channel struct {
 }
 
 func (c *Channel) SendMessage(sender *User, message string) {
-	packet := packets.SendMessage(sender.Name, sender.ID, c.Name, message)
+	packet := packets.SendMessage(sender.Name, sender.ID, c.ClientName, message)
 	packet.Ignored = append(packet.Ignored, sender.Token)
 	c.Stream.Send(packet)
 	if strings.HasPrefix(message, "!") {

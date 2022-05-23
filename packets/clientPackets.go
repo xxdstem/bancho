@@ -25,6 +25,15 @@ type SettignsStruct struct {
 	Slots         int
 }
 
+func JoinMatch(pack inbound.BasePacket) (uint32, string) {
+	var (
+		id uint32
+		pw string
+	)
+	pack.Unmarshal(&id, &pw)
+	return id, pw
+}
+
 func MatchMods(pack inbound.BasePacket) int32 {
 	var m int32
 	pack.Unmarshal(&m)

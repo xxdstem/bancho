@@ -11,5 +11,5 @@ func ChangeMods(ps common.PackSess) {
 	match.Mutex.Lock()
 	defer match.Mutex.Unlock()
 	match.Settings.Mods = mods
-	UpdateMatch(ps)
+	UpdateMatch(match)
 }

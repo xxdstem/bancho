@@ -59,13 +59,20 @@ func (u *User) LeaveChannel(ch *Channel) {
 	u.mutex.Unlock()
 }
 
-func (u *User) JoinMatch(m *Match) {
-	m.UserJoin(u)
-	u.Match = m
+func (u *User) JoinMatch(m *Match) bool {
+	if ok := m.UserJoin(u); ok {
+		u.Match = m
+		m.Stream.Subscribe(u.Token)
+		return true
+	}
+	return false
 }
 
 func (u *User) LeaveMatch() bool {
+	u.Match.Stream.Unsubscribe(u.Token)
+	u.LeaveChannel(u.Match.Channel)
 	_, dispose := u.Match.UserLeft(u)
+
 	u.Match = nil
 	return dispose
 }

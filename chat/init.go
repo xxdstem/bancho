@@ -12,16 +12,18 @@ var channelsMutex *sync.RWMutex = &sync.RWMutex{}
 
 // TODO: Make IRC Server messaging here
 
-func NewChannel(name string) {
+func NewChannel(name string, temp bool) *common.Channel {
 	channelsMutex.Lock()
 	stream := common.NewStream(fmt.Sprintf("chat/#%s", name))
 	channels[name] = &common.Channel{
 		ID:         1,
+		Temporary:  temp,
 		Name:       name,
 		ClientName: ConvertToClientName(name),
 		Stream:     stream,
 	}
 	channelsMutex.Unlock()
+	return channels[name]
 }
 
 func GetChannel(name string) *common.Channel {
@@ -43,8 +45,6 @@ func ConvertToClientName(name string) string {
 }
 
 func init() {
-
-	NewChannel("#osu")
-	NewChannel("#lobby")
-
+	NewChannel("#osu", false)
+	NewChannel("#lobby", false)
 }

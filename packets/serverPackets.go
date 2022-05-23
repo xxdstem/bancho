@@ -35,6 +35,10 @@ func FriendList(friends []int32) FinalPacket {
 	return MakePacket(72, []Packet{{friends, INT_LIST}})
 }
 
+func ChannelKicked(channel string) FinalPacket {
+	return MakePacket(BanchoChannelRevoked, []Packet{{channel, STRING}})
+}
+
 func ChannelListingComplete() FinalPacket {
 	return MakePacket(89, []Packet{{0, UINT32}})
 }
@@ -71,4 +75,8 @@ func DisposeMatch(matchID uint32) FinalPacket {
 
 func LogOut(userID int32) FinalPacket {
 	return MakePacket(BanchoHandleUserQuit, []Packet{{userID, SINT32}, {0, BYTE}})
+}
+
+func MatchJoinFailed() FinalPacket {
+	return MakePacket(BanchoMatchJoinFail, []Packet{})
 }

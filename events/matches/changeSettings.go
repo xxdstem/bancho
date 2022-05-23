@@ -15,5 +15,5 @@ func ChangeSettings(ps common.PackSess) {
 		MD5:  packetData.BeatmapMD5,
 		ID:   packetData.BeatmapID,
 	}
-	UpdateMatch(ps)
+	UpdateMatch(match)
 }

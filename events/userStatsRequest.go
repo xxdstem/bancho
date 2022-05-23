@@ -18,7 +18,7 @@ func UserStatsRequest(ps common.PackSess) {
 			continue
 		}
 		uSession, ok := common.UidToSession[v]
-		if !ok {
+		if !ok || uSession.User.ID == 999 {
 			continue
 		}
 		ps.S.Push(userPackets.UserDataFull(uSession.User))

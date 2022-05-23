@@ -42,5 +42,7 @@ func HandleEvent(ps common.PackSess) {
 		matches.PartMatch(ps)
 	case packets.OsuMatchChangeMods:
 		matches.ChangeMods(ps)
+	case packets.OsuMatchJoin:
+		matches.JoinMatch(ps)
 	}
 }

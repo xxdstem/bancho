@@ -2,6 +2,7 @@ package common
 
 import (
 	"bancho/common/log"
+	"fmt"
 	"sync"
 )
 
@@ -12,6 +13,8 @@ type Match struct {
 	CreatorID  int32
 	HostID     int32
 	InProgress bool
+	Stream     *Stream
+	Channel    *Channel
 	Settings   MatchSettings
 	Beatmap    MatchBeatmap
 	Players    [16]MatchPlayer
@@ -53,16 +56,22 @@ func NewMatch(m Match) *Match {
 	MatchesMutex.Lock()
 	defer MatchesMutex.Unlock()
 	lastMatchID++
+	m.Stream = NewStream(fmt.Sprintf("multi/%d", lastMatchID))
 	m.ID = uint32(lastMatchID)
 	Matches[lastMatchID] = &m
 
 	return Matches[lastMatchID]
+}
 
+func GetMatch(id uint32) *Match {
+	return Matches[int(id)]
 }
 
 func DisposeMatch(m *Match) {
 	MatchesMutex.Lock()
 	defer MatchesMutex.Unlock()
+	m.Stream.Delete()
+	m.Channel.Stream.Delete()
 	Matches[int(m.ID)] = nil
 	log.Debug("disposing match %d", m.ID)
 }
@@ -94,7 +103,6 @@ func (m *Match) UserJoin(u *User) bool {
 	m.Players[spareSlot].User = u
 	m.Players[spareSlot].Team = 0
 	m.Players[spareSlot].Status = 4
-
 	return true
 }
 

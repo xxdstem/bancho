@@ -1,10 +1,12 @@
 package events
 
 import (
+	"bancho/chat"
 	"bancho/common"
 	"bancho/common/log"
 	"bancho/packets"
 	"bancho/packets/userPackets"
+	"fmt"
 	"sync"
 )
 
@@ -29,8 +31,12 @@ func CreateMatch(ps common.PackSess) {
 		m.Players[i].Status = 2
 	}
 	match := common.NewMatch(m)
+	match.Channel = chat.NewChannel(fmt.Sprintf("#multi_%d", match.ID), true)
+
 	log.Debug("User %d: Created match #%d", ps.S.User.ID, match.ID)
 	ps.S.User.JoinMatch(match)
+	ps.S.User.JoinChannel(match.Channel)
+	ps.S.Push(userPackets.ChannelJoin(match.Channel))
 	s := common.GetStream("lobby")
 	s.Send(userPackets.MatchDataFull(match, packets.BanchoMatchNew, true))
 	ps.S.Push(userPackets.MatchDataFull(match, packets.BanchoMatchJoinSuccess, false))
