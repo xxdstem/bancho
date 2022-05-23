@@ -4,6 +4,7 @@ import (
 	"bancho/chat"
 	"bancho/common"
 	"bancho/common/log"
+	"bancho/handlers/bot"
 	"bancho/packets"
 )
 
@@ -40,5 +41,12 @@ func HandlePrivateMessage(ps common.PackSess) {
 		log.Error(err)
 	}
 	sess := common.GetSessionByUsername(common.SafeUsername(destination))
+	if sess.User.ID == 999 {
+		msg := bot.HandleMessage(message)
+		if msg != "" {
+			ps.S.Push(packets.SendMessage("GoBot", 999, ps.S.User.Name, msg))
+		}
+		return
+	}
 	sess.Push(packets.SendMessage(ps.S.User.Name, ps.S.User.ID, destination, message))
 }
