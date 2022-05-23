@@ -35,6 +35,7 @@ func HandlePrivateMessage(ps common.PackSess) {
 	var (
 		message     string
 		destination string
+		packet      packets.FinalPacket
 	)
 	err := ps.P.Unmarshal(&message, &message, &destination)
 	if err != nil {
@@ -44,9 +45,11 @@ func HandlePrivateMessage(ps common.PackSess) {
 	if sess.User.ID == 999 {
 		msg := bot.HandleMessage(message)
 		if msg != "" {
-			ps.S.Push(packets.SendMessage("GoBot", 999, ps.S.User.Name, msg))
+			packet = packets.SendMessage("GoBot", 999, ps.S.User.Name, msg)
+			ps.S.Push(packet)
 		}
 		return
 	}
-	sess.Push(packets.SendMessage(ps.S.User.Name, ps.S.User.ID, destination, message))
+	packet = packets.SendMessage(ps.S.User.Name, ps.S.User.ID, destination, message)
+	sess.Push(packet)
 }
