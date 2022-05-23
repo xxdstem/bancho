@@ -77,8 +77,6 @@ func DisposeMatch(m *Match) {
 }
 
 func (m *Match) getUserSlotID(u int32) int {
-	m.Mutex.Lock()
-	defer m.Mutex.Unlock()
 	for i, slot := range m.Players {
 
 		if slot.User != nil && slot.User.ID == u {
@@ -92,6 +90,15 @@ func (m *Match) TransferHost(slotID uint32) {
 	u := m.Players[slotID].User
 	if u != nil {
 		m.HostID = u.ID
+	}
+}
+
+func (m *Match) UserBeatmapStatus(u *User, has bool) {
+	slotID := m.getUserSlotID(u.ID)
+	if has {
+		m.Players[slotID].Status = 4
+	} else {
+		m.Players[slotID].Status = 16
 	}
 }
 
@@ -116,17 +123,17 @@ func (m *Match) UserJoin(u *User) bool {
 
 func (m *Match) UserLeft(u *User) (bool, bool) {
 	slotID := m.getUserSlotID(u.ID)
-	m.Mutex.Lock()
-	m.Players[slotID].User = nil
-	m.Players[slotID].Team = 0
-	m.Players[slotID].Status = 1
-
-	m.Mutex.Unlock()
-	if m.countUsers() == 0 {
-		DisposeMatch(m)
-		return true, true
+	if slotID != -1 {
+		m.Players[slotID].User = nil
+		m.Players[slotID].Team = 0
+		m.Players[slotID].Status = 1
+		if m.countUsers() == 0 {
+			DisposeMatch(m)
+			return true, true
+		}
+		return true, false
 	}
-	return true, false
+	return false, false
 
 }
 
