@@ -6,7 +6,7 @@ import (
 	"math"
 )
 
-type SettinsStruct struct {
+type SettignsStruct struct {
 	MatchID       uint16
 	InProgress    byte
 	unknown       byte
@@ -25,8 +25,14 @@ type SettinsStruct struct {
 	Slots         int
 }
 
-func MatchSettings(pack inbound.BasePacket) SettinsStruct {
-	m := SettinsStruct{}
+func MatchMods(pack inbound.BasePacket) int32 {
+	var m int32
+	pack.Unmarshal(&m)
+	return m
+}
+
+func MatchSettings(pack inbound.BasePacket) SettignsStruct {
+	m := SettignsStruct{}
 	pack.Unmarshal(
 		&m.MatchID,
 		&m.InProgress,

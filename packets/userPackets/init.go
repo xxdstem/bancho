@@ -56,6 +56,20 @@ func UserDataFull(user *common.User) packets.FinalPacket {
 	return packets.MakePacket(11, packetData)
 }
 
+func ChannelJoin(ch *common.Channel) packets.FinalPacket {
+	return packets.MakePacket(64, []packets.Packet{
+		{ch.Name, packets.STRING},
+	})
+}
+
+func ChannelInfo(ch *common.Channel) packets.FinalPacket {
+	return packets.MakePacket(65, []packets.Packet{
+		{ch.Name, packets.STRING},
+		{ch.Description, packets.STRING},
+		{ch.Stream.Clients(), packets.UINT16},
+	})
+}
+
 func MatchDataFull(m *common.Match, packetID uint16, censored bool) packets.FinalPacket {
 	var password string
 	if censored && m.Password != "" {
@@ -65,9 +79,9 @@ func MatchDataFull(m *common.Match, packetID uint16, censored bool) packets.Fina
 	}
 	pack := []packets.Packet{
 		{uint16(m.ID), packets.UINT16},
+		{byte(0), packets.BYTE}, // m.InProgress
 		{byte(0), packets.BYTE},
-		{byte(0), packets.BYTE},
-		{uint32(0), packets.UINT32},
+		{uint32(m.Settings.Mods), packets.UINT32},
 		{m.Name, packets.STRING},
 		{password, packets.STRING},
 		{m.Beatmap.Name, packets.STRING},
@@ -85,7 +99,7 @@ func MatchDataFull(m *common.Match, packetID uint16, censored bool) packets.Fina
 		packets.Packet{uint32(m.HostID), packets.UINT32},
 
 		packets.Packet{m.HostID, packets.SINT32},
-		packets.Packet{0, packets.BYTE},
+		packets.Packet{m.Settings.GameMode, packets.BYTE},
 		packets.Packet{0, packets.BYTE},
 		packets.Packet{0, packets.BYTE},
 		packets.Packet{0, packets.UINT32},

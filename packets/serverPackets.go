@@ -35,22 +35,6 @@ func FriendList(friends []int32) FinalPacket {
 	return MakePacket(72, []Packet{{friends, INT_LIST}})
 }
 
-//FULL REWORK
-
-func ChannelJoin() FinalPacket {
-	return MakePacket(64, []Packet{
-		{"#osu", STRING},
-	})
-}
-
-func ChannelInfo() FinalPacket {
-	return MakePacket(65, []Packet{
-		{"#osu", STRING},
-		{"Main channel", STRING},
-		{1, UINT16},
-	})
-}
-
 func ChannelListingComplete() FinalPacket {
 	return MakePacket(89, []Packet{{0, UINT32}})
 }

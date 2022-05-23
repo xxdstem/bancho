@@ -46,7 +46,9 @@ func Handle(input []byte, output io.Writer, token string) (string, error) {
 		common.SessionsMutex.Lock()
 		token = common.GenerateGUID()
 		self = &common.Session{
-			User:        &common.User{},
+			User: &common.User{
+				Channels: make(map[string]*common.Channel),
+			},
 			LastRequest: time.Now(),
 			Stream:      list.New(),
 			Mutex:       &sync.Mutex{},

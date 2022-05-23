@@ -109,6 +109,10 @@ func (s *Stream) Name() string {
 	return s.name
 }
 
+func (s *Stream) Clients() int {
+	return len(s.subscribers)
+}
+
 // Send sends something to all the users in the stream.
 func (s *Stream) Send(p packets.FinalPacket) {
 	s.send(p)

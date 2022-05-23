@@ -14,7 +14,10 @@ import (
 // LoginData is the data received by the osu! client upon a login request to bancho.
 
 func Login(input []byte) (string, bool, error) {
-	sess, guid := common.NewSession(common.User{})
+	u := common.User{
+		Channels: make(map[string]*common.Channel),
+	}
+	sess, guid := common.NewSession(u)
 	loginData, err := Unmarshal(input)
 	if err != nil {
 		sess.Push(packets.UserID(-1))
@@ -23,6 +26,7 @@ func Login(input []byte) (string, bool, error) {
 	if err != nil {
 		sess.Push(packets.UserID(-1))
 	}
+	osuChannel := chat.GetChannel("#osu")
 	sess.User.UpdateStats(0)
 	sess.Push(
 		packets.SilenceEnd(0),
@@ -33,8 +37,8 @@ func Login(input []byte) (string, bool, error) {
 		userPackets.UserData(sess.User),
 		userPackets.UserDataFull(sess.User),
 		userPackets.OnlinePlayers(),
-		packets.ChannelJoin(),
-		packets.ChannelInfo(),
+		userPackets.ChannelJoin(osuChannel),
+		userPackets.ChannelInfo(osuChannel),
 	)
 	sess.Push(packets.ChannelListingComplete())
 
@@ -52,7 +56,7 @@ func Login(input []byte) (string, bool, error) {
 		log.Error("niggers", main)
 	}
 	main.Subscribe(guid)
-	osuChannel := chat.GetChannel("#osu")
+
 	sess.User.JoinChannel(osuChannel)
 
 	go main.Send(packets.UserPresence(int32(sess.User.ID)))

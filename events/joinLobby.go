@@ -1,6 +1,7 @@
 package events
 
 import (
+	"bancho/chat"
 	"bancho/common"
 	"bancho/common/log"
 	"bancho/packets"
@@ -10,6 +11,8 @@ import (
 func JoinLobby(ps common.PackSess) {
 	s := common.GetStream("lobby")
 	s.Subscribe(ps.S.User.Token)
+	ch := chat.GetChannel("#lobby")
+	ps.S.Push(userPackets.ChannelJoin(ch))
 	common.MatchesMutex.Lock()
 	defer common.MatchesMutex.Unlock()
 	for _, v := range common.Matches {

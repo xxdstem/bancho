@@ -21,7 +21,7 @@ type User struct {
 		Longitude float32
 		Latitude  float32
 	}
-	Channels []*Channel
+	Channels map[string]*Channel
 	Match    *Match
 
 	mutex *sync.RWMutex
@@ -47,8 +47,15 @@ type UserStats struct {
 
 func (u *User) JoinChannel(ch *Channel) {
 	u.mutex.Lock()
-	u.Channels = append(u.Channels, ch)
+	u.Channels[ch.Name] = ch
 	ch.Stream.Subscribe(u.Token)
+	u.mutex.Unlock()
+}
+
+func (u *User) LeaveChannel(ch *Channel) {
+	u.mutex.Lock()
+	delete(u.Channels, ch.Name)
+	ch.Stream.Unsubscribe(u.Token)
 	u.mutex.Unlock()
 }
 
