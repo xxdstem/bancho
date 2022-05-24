@@ -14,6 +14,18 @@ func ChangeSettings(ps common.PackSess) {
 		MD5:  packetData.BeatmapMD5,
 		ID:   packetData.BeatmapID,
 	}
+	mods := match.Settings.Mods
+	if packetData.ModMode != match.Settings.ModMode {
+		mods = 0
+	}
+	match.Settings = common.MatchSettings{
+		GameMode:    packetData.GameMode,
+		Mods:        mods,
+		ScoringType: packetData.ScoringType,
+		TeamType:    packetData.TeamType,
+		ModMode:     packetData.ModMode,
+	}
+
 	UpdateMatch(match)
 	match.Mutex.Unlock()
 }

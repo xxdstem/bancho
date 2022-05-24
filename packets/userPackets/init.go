@@ -104,7 +104,14 @@ func MatchDataFull(m *common.Match, packetID uint16, censored bool) packets.Fina
 		packets.Packet{m.Settings.GameMode, packets.BYTE},
 		packets.Packet{m.Settings.ScoringType, packets.BYTE},
 		packets.Packet{m.Settings.TeamType, packets.BYTE},
-		packets.Packet{m.Settings.ModMode, packets.UINT32},
+		packets.Packet{m.Settings.ModMode, packets.BYTE},
 	)
+	if m.Settings.ModMode == 1 {
+		for _, slot := range m.Players {
+			pack = append(pack, packets.Packet{uint32(slot.Mods), packets.UINT32})
+		}
+	}
+	pack = append(pack, packets.Packet{0, packets.UINT32})
+
 	return packets.MakePacket(packetID, pack)
 }

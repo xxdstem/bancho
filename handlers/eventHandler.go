@@ -50,5 +50,9 @@ func HandleEvent(ps common.PackSess) {
 		matches.BeatmapEvent(ps, true)
 	case packets.OsuMatchNoBeatmap:
 		matches.BeatmapEvent(ps, false)
+	case packets.OsuMatchReady:
+		matches.SetReady(ps)
+	case packets.OsuMatchNotReady:
+		matches.SetReady(ps)
 	}
 }

@@ -22,7 +22,7 @@ type Match struct {
 }
 
 type MatchSettings struct {
-	GameMode    int
+	GameMode    byte
 	Mods        int32
 	ScoringType byte
 	TeamType    byte
@@ -40,6 +40,8 @@ type MatchPlayer struct {
 	Score  PlayerScore
 	Team   byte
 	Status byte
+	Failed bool
+	Passed bool
 	Mods   int32
 }
 
@@ -76,14 +78,23 @@ func DisposeMatch(m *Match) {
 	log.Debug("disposing match %d", m.ID)
 }
 
-func (m *Match) getUserSlotID(u int32) int {
+func (m *Match) getUserSlotID(u int32) *MatchPlayer {
 	for i, slot := range m.Players {
-
 		if slot.User != nil && slot.User.ID == u {
-			return i
+			return &m.Players[i]
 		}
 	}
-	return -1
+	return nil
+}
+
+func (m *Match) SetPlayerMods(userID int32, mods int32) {
+	p := m.getUserSlotID(userID)
+	p.Mods = mods & ^(64 | 256 | 512)
+	log.Info("setting to %s mods: %d | %d", p.User.Name, p.Mods, mods)
+}
+
+func (m *Match) SetMods(mods int32) {
+	m.Settings.Mods = mods
 }
 
 func (m *Match) TransferHost(slotID uint32) {
@@ -93,12 +104,24 @@ func (m *Match) TransferHost(slotID uint32) {
 	}
 }
 
+func (m *Match) ToggleReady(userID int32) {
+	p := m.getUserSlotID(userID)
+	switch p.Status {
+	case 4:
+		p.Status = 8
+	case 8:
+		p.Status = 4
+	default:
+		break
+	}
+}
+
 func (m *Match) UserBeatmapStatus(u *User, has bool) {
-	slotID := m.getUserSlotID(u.ID)
+	p := m.getUserSlotID(u.ID)
 	if has {
-		m.Players[slotID].Status = 4
+		p.Status = 4
 	} else {
-		m.Players[slotID].Status = 16
+		p.Status = 16
 	}
 }
 
@@ -122,11 +145,11 @@ func (m *Match) UserJoin(u *User) bool {
 }
 
 func (m *Match) UserLeft(u *User) (bool, bool) {
-	slotID := m.getUserSlotID(u.ID)
-	if slotID != -1 {
-		m.Players[slotID].User = nil
-		m.Players[slotID].Team = 0
-		m.Players[slotID].Status = 1
+	p := m.getUserSlotID(u.ID)
+	if p != nil {
+		p.User = nil
+		p.Team = 0
+		p.Status = 1
 		if m.countUsers() == 0 {
 			DisposeMatch(m)
 			return true, true

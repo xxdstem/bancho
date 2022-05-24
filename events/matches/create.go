@@ -19,8 +19,8 @@ func CreateMatch(ps common.PackSess) {
 	}
 	m := common.Match{
 		Name:      packetData.Name,
-		CreatorID: packetData.CreatorID,
-		HostID:    packetData.CreatorID,
+		CreatorID: ps.S.User.ID,
+		HostID:    ps.S.User.ID,
 		Mutex:     &sync.Mutex{},
 		Beatmap:   b,
 	}
