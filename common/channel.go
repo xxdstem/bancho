@@ -24,7 +24,7 @@ func (c *Channel) SendMessage(sender *User, message string) {
 	if strings.HasPrefix(message, "!") {
 		msg := bot.HandleMessage(message)
 		if msg != "" {
-			packet = packets.SendMessage("GoBot", 999, c.Name, msg)
+			packet = packets.SendMessage("GoBot", 999, c.ClientName, msg)
 			c.Stream.Send(packet)
 		}
 	}

@@ -4,7 +4,6 @@ import (
 	"bancho/common"
 	"bancho/common/log"
 	"bancho/packets"
-	_ "bancho/packets"
 )
 
 func ChangeSlot(ps common.PackSess) {

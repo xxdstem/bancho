@@ -97,6 +97,19 @@ func (m *Match) SetMods(mods int32) {
 	m.Settings.Mods = mods
 }
 
+func (m *Match) ToggleSlotLocked(slotID uint32) bool {
+	slot := &m.Players[slotID]
+	if slot.User != nil {
+		m.UserLeft(slot.User)
+		return true
+	}
+	if slot.Status == 2 {
+		slot.Status = 1
+	} else {
+		slot.Status = 2
+	}
+	return false
+}
 func (m *Match) TransferHost(slotID uint32) {
 	u := m.Players[slotID].User
 	if u != nil {

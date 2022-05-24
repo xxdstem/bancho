@@ -17,15 +17,23 @@ func Login(input []byte) (string, bool, error) {
 	u := common.User{
 		Channels: make(map[string]*common.Channel),
 	}
+	var password string
 	sess, guid := common.NewSession(u)
 	loginData, err := Unmarshal(input)
 	if err != nil {
 		sess.Push(packets.UserID(-1))
+		return guid, true, nil
 	}
-	err = common.DB.QueryRow("SELECT id, username FROM users WHERE username LIKE ?", loginData.Username).Scan(&sess.User.ID, &sess.User.Name)
+	err = common.DB.QueryRow("SELECT id, username, password_md5 FROM users WHERE username LIKE ?", loginData.Username).Scan(&sess.User.ID, &sess.User.Name, &password)
 	if err != nil {
 		sess.Push(packets.UserID(-1))
+		return guid, true, nil
 	}
+	if !common.IsSamePass(loginData.Password, password) {
+		sess.Push(packets.UserID(-1))
+		return guid, true, nil
+	}
+
 	osuChannel := chat.GetChannel("#osu")
 	sess.User.UpdateStats(0)
 	sess.Push(

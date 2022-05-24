@@ -3,7 +3,6 @@ package packets
 import (
 	//"github.com/xxdstem/bancho/common"
 	"bancho/inbound"
-	"fmt"
 	"math"
 )
 
@@ -75,24 +74,9 @@ func MatchSettings(pack inbound.BasePacket) SettignsStruct {
 	if m.Password != "" {
 		start += 1
 	}
-	// fix := false
-	// l := len(pack.Content)
-	// for !fix && l-start > 10 {
-	// 	var v byte
-	// 	inbound.BasePacket{
-	// 		Content: pack.Content[start:],
-	// 	}.Unmarshal(&v)
-	// 	if v == 0 {
-	// 		start += 1
-	// 		fmt.Println("havayu")
-	// 	} else {
-	// 		fix = true
-	// 	}
-	// }
 	pack = inbound.BasePacket{
 		Content: pack.Content[start:],
 	}
-	fmt.Println(pack.Content)
 	pack.Unmarshal(
 		&m.GameMode,
 		&m.ScoringType,
@@ -104,7 +88,6 @@ func MatchSettings(pack inbound.BasePacket) SettignsStruct {
 			i++
 		}
 	}
-	fmt.Println(m)
 	m.Slots = int(math.Min(float64(i), 16))
 	return m
 }

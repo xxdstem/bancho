@@ -54,5 +54,7 @@ func HandleEvent(ps common.PackSess) {
 		matches.SetReady(ps)
 	case packets.OsuMatchNotReady:
 		matches.SetReady(ps)
+	case packets.OsuMatchLock:
+		matches.LockSlot(ps)
 	}
 }
