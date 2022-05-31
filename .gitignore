@@ -5,3 +5,5 @@ config\.json
 
 bancho
 ripple.sql
+*.crt
+*.key
