@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -120,6 +119,12 @@ func main() {
 	log.Info("connected to mysql!")
 	defer common.DB.Close()
 	handler := &ConnectionHandler{}
+	err = startProxy(handler)
+	if err != nil {
+		log.Error("", err)
+		panic(err)
+	}
 	log.Info("Listening on :%d\n", cnf.Port)
-	http.ListenAndServe(fmt.Sprintf(":%d", cnf.Port), handler)
+
+	//http.ListenAndServe(fmt.Sprintf(":%d", cnf.Port), handler)
 }
